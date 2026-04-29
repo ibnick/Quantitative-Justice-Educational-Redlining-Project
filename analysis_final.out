@@ -1,0 +1,1152 @@
+Mplus VERSION 8.11
+MUTHEN & MUTHEN
+04/26/2026   5:54 AM
+
+INPUT INSTRUCTIONS
+
+
+  TITLE: Bayesian Analysis - Reference Group White Female;
+
+  DATA:
+    FILE IS merged_2024.dat;
+
+  VARIABLE:
+    NAMES ARE is_sped school reg_n rs_n;  ! reg_n is the 3rd column;
+
+    ! Category 13 (White_F) is removed from here to make it the reference
+    USEVARIABLES ARE is_sped
+      reg_mr_f reg_w_m reg_aa_m reg_hl_m reg_hl_f
+      reg_aa_f reg_ai_f reg_as_m reg_hw_f reg_as_f
+      reg_mr_m reg_ai_m reg_hw_m reg_na_f reg_na_m;
+
+    CATEGORICAL IS is_sped;
+    MISSING ARE .; !tells MPLUS the dots are all NAs
+
+  DEFINE:
+    ! Reference Group: White_Female (Excluded from definitions)
+
+    reg_mr_f = (reg_n == 1);   ! Multi-Racial Female
+    reg_w_m  = (reg_n == 2);   ! White Male
+    reg_aa_m = (reg_n == 3);   ! African American Male
+    reg_hl_m = (reg_n == 4);   ! Hispanic/Latino Male
+    reg_hl_f = (reg_n == 5);   ! Hispanic/Latino Female
+    reg_aa_f = (reg_n == 7);   ! African American Female
+    reg_ai_f = (reg_n == 8);   ! American Indian Female
+    reg_as_m = (reg_n == 9);   ! Asian Male
+    reg_hw_f = (reg_n == 10);  ! Hawaiian Female
+    reg_as_f = (reg_n == 11);  ! Asian Female
+    reg_mr_m = (reg_n == 12);  ! Multi-Racial Male
+    reg_ai_m = (reg_n == 13);  ! American Indian Male
+    reg_hw_m = (reg_n == 14);  ! Hawaiian Male
+    reg_na_f = (reg_n == 15);  ! NA Female (Administrative Lag Group)
+    reg_na_m = (reg_n == 16);  ! NA Male (Administrative Lag Group)
+
+  ANALYSIS:
+    ESTIMATOR = BAYES;
+    PROCESSORS = 4;
+    BITERATIONS = (5000);
+    BCONVERGENCE = 0.01;
+
+  MODEL:
+  ! Model now strictly tests group differences against white females
+    is_sped ON reg_mr_f reg_w_m reg_aa_m reg_hl_m reg_hl_f
+      reg_aa_f reg_ai_f reg_as_m reg_hw_f reg_as_f
+      reg_mr_m reg_ai_m reg_hw_m reg_na_f reg_na_m;
+
+  OUTPUT:
+    TECH1 TECH8 STDYX;
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Bayesian Analysis - Reference Group White Female;
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                      141761
+
+Number of dependent variables                                    1
+Number of independent variables                                 15
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Binary and ordered categorical (ordinal)
+   IS_SPED
+
+Observed independent variables
+   REG_MR_F    REG_W_M     REG_AA_M    REG_HL_M    REG_HL_F    REG_AA_F
+   REG_AI_F    REG_AS_M    REG_HW_F    REG_AS_F    REG_MR_M    REG_AI_M
+   REG_HW_M    REG_NA_F    REG_NA_M
+
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               2
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.100D-01
+  Maximum number of iterations                               50000
+  K-th iteration used for thinning                               1
+Link                                                        PROBIT
+
+Input data file(s)
+  merged_2024.dat
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns             1
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED        1.000
+ REG_MR_F       1.000         1.000
+ REG_W_M        1.000         1.000         1.000
+ REG_AA_M       1.000         1.000         1.000         1.000
+ REG_HL_M       1.000         1.000         1.000         1.000         1.000
+ REG_HL_F       1.000         1.000         1.000         1.000         1.000
+ REG_AA_F       1.000         1.000         1.000         1.000         1.000
+ REG_AI_F       1.000         1.000         1.000         1.000         1.000
+ REG_AS_M       1.000         1.000         1.000         1.000         1.000
+ REG_HW_F       1.000         1.000         1.000         1.000         1.000
+ REG_AS_F       1.000         1.000         1.000         1.000         1.000
+ REG_MR_M       1.000         1.000         1.000         1.000         1.000
+ REG_AI_M       1.000         1.000         1.000         1.000         1.000
+ REG_HW_M       1.000         1.000         1.000         1.000         1.000
+ REG_NA_F       1.000         1.000         1.000         1.000         1.000
+ REG_NA_M       1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ REG_HL_F       1.000
+ REG_AA_F       1.000         1.000
+ REG_AI_F       1.000         1.000         1.000
+ REG_AS_M       1.000         1.000         1.000         1.000
+ REG_HW_F       1.000         1.000         1.000         1.000         1.000
+ REG_AS_F       1.000         1.000         1.000         1.000         1.000
+ REG_MR_M       1.000         1.000         1.000         1.000         1.000
+ REG_AI_M       1.000         1.000         1.000         1.000         1.000
+ REG_HW_M       1.000         1.000         1.000         1.000         1.000
+ REG_NA_F       1.000         1.000         1.000         1.000         1.000
+ REG_NA_M       1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ REG_AS_F       1.000
+ REG_MR_M       1.000         1.000
+ REG_AI_M       1.000         1.000         1.000
+ REG_HW_M       1.000         1.000         1.000         1.000
+ REG_NA_F       1.000         1.000         1.000         1.000         1.000
+ REG_NA_M       1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              REG_NA_M
+              ________
+ REG_NA_M       1.000
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    IS_SPED
+      Category 1    0.816       115683.000
+      Category 2    0.184        26078.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     REG_MR_F              0.148       1.980       0.000   85.17%       0.000      0.000      0.000
+          141761.000       0.126       1.919       1.000   14.83%       0.000      0.000
+     REG_W_M               0.155       1.911       0.000   84.54%       0.000      0.000      0.000
+          141761.000       0.131       1.651       1.000   15.46%       0.000      0.000
+     REG_AA_M              0.002      22.597       0.000   99.81%       0.000      0.000      0.000
+          141761.000       0.002     508.629       1.000    0.19%       0.000      0.000
+     REG_HL_M              0.002      22.434       0.000   99.80%       0.000      0.000      0.000
+          141761.000       0.002     501.291       1.000    0.20%       0.000      0.000
+     REG_HL_F              0.021       6.730       0.000   97.93%       0.000      0.000      0.000
+          141761.000       0.020      43.288       1.000    2.07%       0.000      0.000
+     REG_AA_F              0.001      38.796       0.000   99.93%       0.000      0.000      0.000
+          141761.000       0.001    1503.096       1.000    0.07%       0.000      0.000
+     REG_AI_F              0.001      39.650       0.000   99.94%       0.000      0.000      0.000
+          141761.000       0.001    1570.123       1.000    0.06%       0.000      0.000
+     REG_AS_M              0.096       2.742       0.000   90.40%       0.000      0.000      0.000
+          141761.000       0.087       5.519       1.000    9.60%       0.000      0.000
+     REG_HW_F              0.097       2.716       0.000   90.26%       0.000      0.000      0.000
+          141761.000       0.088       5.377       1.000    9.74%       0.000      0.000
+     REG_AS_F              0.027       5.844       0.000   97.31%       0.000      0.000      0.000
+          141761.000       0.026      32.148       1.000    2.69%       0.000      0.000
+     REG_MR_M              0.027       5.848       0.000   97.31%       0.000      0.000      0.000
+          141761.000       0.026      32.196       1.000    2.69%       0.000      0.000
+     REG_AI_M              0.004      15.209       0.000   99.57%       0.000      0.000      0.000
+          141761.000       0.004     229.320       1.000    0.43%       0.000      0.000
+     REG_HW_M              0.011       9.390       0.000   98.90%       0.000      0.000      0.000
+          141761.000       0.011      86.176       1.000    1.10%       0.000      0.000
+     REG_NA_F              0.186       1.613       0.000   81.39%       0.000      0.000      0.000
+          141761.000       0.151       0.602       1.000   18.61%       0.000      0.000
+     REG_NA_M              0.200       1.502       0.000   80.03%       0.000      0.000      0.000
+          141761.000       0.160       0.257       1.000   19.97%       0.000      0.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                              16
+
+Bayesian Posterior Predictive Checking using Chi-Square
+
+          95% Confidence Interval for the Difference Between
+          the Observed and the Replicated Chi-Square Values
+
+                                -16.020            15.948
+
+          Posterior Predictive P-Value              0.482
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+ IS_SPED    ON
+    REG_MR_F           0.262       0.032      0.000       0.200       0.324      *
+    REG_W_M            0.626       0.032      0.000       0.564       0.688      *
+    REG_AA_M           0.185       0.098      0.031      -0.012       0.372
+    REG_HL_M           0.525       0.088      0.000       0.354       0.699      *
+    REG_HL_F          -0.466       0.053      0.000      -0.572      -0.361      *
+    REG_AA_F           0.203       0.164      0.111      -0.129       0.516
+    REG_AI_F           0.230       0.162      0.085      -0.094       0.538
+    REG_AS_M           0.099       0.034      0.001       0.035       0.165      *
+    REG_HW_F           0.427       0.033      0.000       0.364       0.491      *
+    REG_AS_F           0.137       0.040      0.000       0.058       0.214      *
+    REG_MR_M           0.513       0.038      0.000       0.439       0.587      *
+    REG_AI_M           4.834       0.652      0.000       3.982       6.421      *
+    REG_HW_M           5.070       0.651      0.000       4.302       6.657      *
+    REG_NA_F           0.150       0.032      0.000       0.088       0.213      *
+    REG_NA_M           0.466       0.031      0.000       0.405       0.527      *
+
+ Thresholds
+    IS_SPED$1          1.294       0.030      0.000       1.234       1.353      *
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+ IS_SPED    ON
+    REG_MR_F           0.079       0.010      0.000       0.060       0.098      *
+    REG_W_M            0.191       0.011      0.000       0.169       0.213      *
+    REG_AA_M           0.007       0.004      0.031       0.000       0.014
+    REG_HL_M           0.020       0.003      0.000       0.013       0.026      *
+    REG_HL_F          -0.056       0.007      0.000      -0.069      -0.043      *
+    REG_AA_F           0.004       0.004      0.111      -0.003       0.011
+    REG_AI_F           0.005       0.003      0.085      -0.002       0.011
+    REG_AS_M           0.025       0.008      0.001       0.009       0.041      *
+    REG_HW_F           0.107       0.009      0.000       0.090       0.124      *
+    REG_AS_F           0.019       0.006      0.000       0.008       0.029      *
+    REG_MR_M           0.070       0.006      0.000       0.059       0.081      *
+    REG_AI_M           0.267       0.033      0.000       0.222       0.347      *
+    REG_HW_M           0.450       0.044      0.000       0.391       0.551      *
+    REG_NA_F           0.049       0.011      0.000       0.029       0.070      *
+    REG_NA_M           0.157       0.011      0.000       0.135       0.180      *
+
+ Thresholds
+    IS_SPED$1          1.097       0.040      0.000       1.010       1.164      *
+
+
+R-SQUARE
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    IS_SPED            0.275       0.039      0.000       0.228       0.371
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION
+
+
+           TAU
+              IS_SPED$
+              ________
+                   16
+
+
+           NU
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              REG_NA_M
+              ________
+                    0
+
+
+           LAMBDA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ REG_MR_F           0             0             0             0             0
+ REG_W_M            0             0             0             0             0
+ REG_AA_M           0             0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           LAMBDA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ REG_MR_F           0             0             0             0             0
+ REG_W_M            0             0             0             0             0
+ REG_AA_M           0             0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           LAMBDA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ REG_MR_F           0             0             0             0             0
+ REG_W_M            0             0             0             0             0
+ REG_AA_M           0             0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           LAMBDA
+              REG_NA_M
+              ________
+ IS_SPED            0
+ REG_MR_F           0
+ REG_W_M            0
+ REG_AA_M           0
+ REG_HL_M           0
+ REG_HL_F           0
+ REG_AA_F           0
+ REG_AI_F           0
+ REG_AS_M           0
+ REG_HW_F           0
+ REG_AS_F           0
+ REG_MR_M           0
+ REG_AI_M           0
+ REG_HW_M           0
+ REG_NA_F           0
+ REG_NA_M           0
+
+
+           THETA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED            0
+ REG_MR_F           0             0
+ REG_W_M            0             0             0
+ REG_AA_M           0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           THETA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ REG_HL_F           0
+ REG_AA_F           0             0
+ REG_AI_F           0             0             0
+ REG_AS_M           0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           THETA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ REG_AS_F           0
+ REG_MR_M           0             0
+ REG_AI_M           0             0             0
+ REG_HW_M           0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           THETA
+              REG_NA_M
+              ________
+ REG_NA_M           0
+
+
+           ALPHA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              REG_NA_M
+              ________
+                    0
+
+
+           BETA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED            0             1             2             3             4
+ REG_MR_F           0             0             0             0             0
+ REG_W_M            0             0             0             0             0
+ REG_AA_M           0             0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           BETA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ IS_SPED            5             6             7             8             9
+ REG_MR_F           0             0             0             0             0
+ REG_W_M            0             0             0             0             0
+ REG_AA_M           0             0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           BETA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ IS_SPED           10            11            12            13            14
+ REG_MR_F           0             0             0             0             0
+ REG_W_M            0             0             0             0             0
+ REG_AA_M           0             0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           BETA
+              REG_NA_M
+              ________
+ IS_SPED           15
+ REG_MR_F           0
+ REG_W_M            0
+ REG_AA_M           0
+ REG_HL_M           0
+ REG_HL_F           0
+ REG_AA_F           0
+ REG_AI_F           0
+ REG_AS_M           0
+ REG_HW_F           0
+ REG_AS_F           0
+ REG_MR_M           0
+ REG_AI_M           0
+ REG_HW_M           0
+ REG_NA_F           0
+ REG_NA_M           0
+
+
+           PSI
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED            0
+ REG_MR_F           0             0
+ REG_W_M            0             0             0
+ REG_AA_M           0             0             0             0
+ REG_HL_M           0             0             0             0             0
+ REG_HL_F           0             0             0             0             0
+ REG_AA_F           0             0             0             0             0
+ REG_AI_F           0             0             0             0             0
+ REG_AS_M           0             0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           PSI
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ REG_HL_F           0
+ REG_AA_F           0             0
+ REG_AI_F           0             0             0
+ REG_AS_M           0             0             0             0
+ REG_HW_F           0             0             0             0             0
+ REG_AS_F           0             0             0             0             0
+ REG_MR_M           0             0             0             0             0
+ REG_AI_M           0             0             0             0             0
+ REG_HW_M           0             0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           PSI
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ REG_AS_F           0
+ REG_MR_M           0             0
+ REG_AI_M           0             0             0
+ REG_HW_M           0             0             0             0
+ REG_NA_F           0             0             0             0             0
+ REG_NA_M           0             0             0             0             0
+
+
+           PSI
+              REG_NA_M
+              ________
+ REG_NA_M           0
+
+
+     STARTING VALUES
+
+
+           TAU
+              IS_SPED$
+              ________
+                0.828
+
+
+           NU
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              REG_NA_M
+              ________
+                0.000
+
+
+           LAMBDA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED        1.000         0.000         0.000         0.000         0.000
+ REG_MR_F       0.000         1.000         0.000         0.000         0.000
+ REG_W_M        0.000         0.000         1.000         0.000         0.000
+ REG_AA_M       0.000         0.000         0.000         1.000         0.000
+ REG_HL_M       0.000         0.000         0.000         0.000         1.000
+ REG_HL_F       0.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         0.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ REG_MR_F       0.000         0.000         0.000         0.000         0.000
+ REG_W_M        0.000         0.000         0.000         0.000         0.000
+ REG_AA_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_F       1.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         1.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         1.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         1.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         1.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ REG_MR_F       0.000         0.000         0.000         0.000         0.000
+ REG_W_M        0.000         0.000         0.000         0.000         0.000
+ REG_AA_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_F       0.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         0.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       1.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         1.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         1.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         1.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         1.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              REG_NA_M
+              ________
+ IS_SPED        0.000
+ REG_MR_F       0.000
+ REG_W_M        0.000
+ REG_AA_M       0.000
+ REG_HL_M       0.000
+ REG_HL_F       0.000
+ REG_AA_F       0.000
+ REG_AI_F       0.000
+ REG_AS_M       0.000
+ REG_HW_F       0.000
+ REG_AS_F       0.000
+ REG_MR_M       0.000
+ REG_AI_M       0.000
+ REG_HW_M       0.000
+ REG_NA_F       0.000
+ REG_NA_M       1.000
+
+
+           THETA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000
+ REG_MR_F       0.000         0.000
+ REG_W_M        0.000         0.000         0.000
+ REG_AA_M       0.000         0.000         0.000         0.000
+ REG_HL_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_F       0.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         0.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ REG_HL_F       0.000
+ REG_AA_F       0.000         0.000
+ REG_AI_F       0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ REG_AS_F       0.000
+ REG_MR_M       0.000         0.000
+ REG_AI_M       0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              REG_NA_M
+              ________
+ REG_NA_M       0.000
+
+
+           ALPHA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              REG_NA_M
+              ________
+                0.000
+
+
+           BETA
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ REG_MR_F       0.000         0.000         0.000         0.000         0.000
+ REG_W_M        0.000         0.000         0.000         0.000         0.000
+ REG_AA_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_F       0.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         0.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ REG_MR_F       0.000         0.000         0.000         0.000         0.000
+ REG_W_M        0.000         0.000         0.000         0.000         0.000
+ REG_AA_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_F       0.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         0.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ REG_MR_F       0.000         0.000         0.000         0.000         0.000
+ REG_W_M        0.000         0.000         0.000         0.000         0.000
+ REG_AA_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_M       0.000         0.000         0.000         0.000         0.000
+ REG_HL_F       0.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         0.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              REG_NA_M
+              ________
+ IS_SPED        0.000
+ REG_MR_F       0.000
+ REG_W_M        0.000
+ REG_AA_M       0.000
+ REG_HL_M       0.000
+ REG_HL_F       0.000
+ REG_AA_F       0.000
+ REG_AI_F       0.000
+ REG_AS_M       0.000
+ REG_HW_F       0.000
+ REG_AS_F       0.000
+ REG_MR_M       0.000
+ REG_AI_M       0.000
+ REG_HW_M       0.000
+ REG_NA_F       0.000
+ REG_NA_M       0.000
+
+
+           PSI
+              IS_SPED       REG_MR_F      REG_W_M       REG_AA_M      REG_HL_M
+              ________      ________      ________      ________      ________
+ IS_SPED        1.000
+ REG_MR_F       0.000         0.063
+ REG_W_M        0.000         0.000         0.065
+ REG_AA_M       0.000         0.000         0.000         0.001
+ REG_HL_M       0.000         0.000         0.000         0.000         0.001
+ REG_HL_F       0.000         0.000         0.000         0.000         0.000
+ REG_AA_F       0.000         0.000         0.000         0.000         0.000
+ REG_AI_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_F       0.000         0.000         0.000         0.000         0.000
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              REG_HL_F      REG_AA_F      REG_AI_F      REG_AS_M      REG_HW_F
+              ________      ________      ________      ________      ________
+ REG_HL_F       0.010
+ REG_AA_F       0.000         0.000
+ REG_AI_F       0.000         0.000         0.000
+ REG_AS_M       0.000         0.000         0.000         0.043
+ REG_HW_F       0.000         0.000         0.000         0.000         0.044
+ REG_AS_F       0.000         0.000         0.000         0.000         0.000
+ REG_MR_M       0.000         0.000         0.000         0.000         0.000
+ REG_AI_M       0.000         0.000         0.000         0.000         0.000
+ REG_HW_M       0.000         0.000         0.000         0.000         0.000
+ REG_NA_F       0.000         0.000         0.000         0.000         0.000
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              REG_AS_F      REG_MR_M      REG_AI_M      REG_HW_M      REG_NA_F
+              ________      ________      ________      ________      ________
+ REG_AS_F       0.013
+ REG_MR_M       0.000         0.013
+ REG_AI_M       0.000         0.000         0.002
+ REG_HW_M       0.000         0.000         0.000         0.005
+ REG_NA_F       0.000         0.000         0.000         0.000         0.076
+ REG_NA_M       0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              REG_NA_M
+              ________
+ REG_NA_M       0.080
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 2~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 3~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 4~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 5~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 6~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 7~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 8~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 9~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 10~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 11~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 12~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 13~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 14~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 15~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 16~N(0.000,5.000)             0.0000              5.0000              2.2361
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     PROCESSOR    BSEED
+     1            0
+     2            285380
+     3            253358
+     4            93468
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              1.636               12
+     200              1.824               13
+     300              1.734               12
+     400              1.162               13
+     500              1.723               13
+     600              2.087               13
+     700              1.550               13
+     800              1.579               13
+     900              1.650               13
+     1000             1.255               13
+     1100             1.036               5
+     1200             1.012               5
+     1300             1.032               13
+     1400             1.049               12
+     1500             1.106               13
+     1600             1.305               13
+     1700             1.527               13
+     1800             1.655               13
+     1900             1.769               13
+     2000             1.918               13
+     2100             2.038               13
+     2200             2.154               13
+     2300             2.271               13
+     2400             2.377               13
+     2500             2.459               13
+     2600             2.470               13
+     2700             2.274               13
+     2800             1.966               13
+     2900             1.827               13
+     3000             1.680               13
+     3100             1.536               13
+     3200             1.464               13
+     3300             1.346               13
+     3400             1.190               13
+     3500             1.111               13
+     3600             1.060               13
+     3700             1.025               12
+     3800             1.026               12
+     3900             1.015               12
+     4000             1.021               12
+     4100             1.036               13
+     4200             1.078               13
+     4300             1.137               13
+     4400             1.207               13
+     4500             1.276               13
+     4600             1.336               13
+     4700             1.397               13
+     4800             1.464               13
+     4900             1.550               13
+     5000             1.642               13
+     5100             1.730               13
+     5200             1.826               13
+     5300             1.898               13
+     5400             1.929               13
+     5500             1.947               13
+     5600             1.995               13
+     5700             2.061               13
+     5800             2.136               13
+     5900             2.211               13
+     6000             2.289               13
+     6100             2.349               13
+     6200             2.402               13
+     6300             2.449               13
+     6400             2.540               13
+     6500             2.607               13
+     6600             2.655               13
+     6700             2.682               13
+     6800             2.658               13
+     6900             2.590               13
+     7000             2.503               13
+     7100             2.450               13
+     7200             2.436               13
+     7300             2.412               13
+     7400             2.349               13
+     7500             2.299               13
+     7600             2.182               13
+     7700             2.074               13
+     7800             2.017               13
+     7900             1.931               13
+     8000             1.840               13
+     8100             1.796               13
+     8200             1.754               13
+     8300             1.703               13
+     8400             1.676               13
+     8500             1.657               13
+     8600             1.612               13
+     8700             1.591               13
+     8800             1.583               13
+     8900             1.573               13
+     9000             1.560               13
+     9100             1.542               13
+     9200             1.529               13
+     9300             1.514               13
+     9400             1.515               13
+     9500             1.515               13
+     9600             1.508               13
+     9700             1.511               13
+     9800             1.511               13
+     9900             1.494               13
+     10000            1.472               13
+     10100            1.455               13
+     10200            1.433               13
+     10300            1.392               13
+     10400            1.346               13
+     10500            1.293               13
+     10600            1.272               13
+     10700            1.254               13
+     10800            1.240               13
+     10900            1.232               13
+     11000            1.225               13
+     11100            1.197               13
+     11200            1.156               13
+     11300            1.123               13
+     11400            1.098               13
+     11500            1.077               13
+     11600            1.052               13
+     11700            1.031               13
+     11800            1.018               13
+     11900            1.010               13
+
+
+DIAGRAM INFORMATION
+
+  Use View Diagram under the Diagram menu in the Mplus Editor to view the diagram.
+  If running Mplus from the Mplus Diagrammer, the diagram opens automatically.
+
+  Diagram output
+    s:\data\ibrahim analysis files\analysis_final.dgm
+
+     Beginning Time:  05:54:31
+        Ending Time:  06:00:48
+       Elapsed Time:  00:06:17
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen
