@@ -1,0 +1,129 @@
+---
+title: "BRMS (School Nesting)"
+author: "Ibrahim Osumanu"
+date: "2026-05-02"
+output: pdf_document
+---
+
+## BRMS for reg
+
+```{r}
+library(readxl)
+library(brms)
+library(dplyr)
+
+# Load data
+library(readxl)
+Final_Merged_2024_K12_Updated <- read_excel("Final_Merged_2024_K12_Updated.xlsx")
+
+# --- 1. Bayesian Model for 'reg' (Nesting in Schools) ---
+df_reg <- Final_Merged_2024_K12_Updated %>%
+  mutate(reg = relevel(as.factor(reg), ref = "White_Female"))
+
+brms_reg <- brm(
+  formula = is_sped ~ reg + (1 | Schl),
+  data = df_reg,
+  family = bernoulli(link = "logit"),
+  chains = 4, 
+  cores = 4, 
+  iter = 2000,
+  backend = "rstan", # Using rstan as a fallback
+  control = list(adapt_delta = 0.95),
+  file = "brms_reg_model" # Automatically saves as .rds and reloads if found
+)
+
+
+
+# --- 3. Calculate Bayesian ICC ---
+# For Bernoulli models, latent ICC uses pi^2 / 3 for distribution-specific variance
+calc_bayesian_icc <- function(model) {
+  # Extract the school-level variance (intercept)
+  var_sch <- VarCorr(model)$Schl$sd[1]^2
+  var_resid <- (pi^2) / 3
+  icc <- var_sch / (var_sch + var_resid)
+  return(icc)
+}
+
+icc_reg <- calc_bayesian_icc(brms_reg)
+
+# --- Display Results ---
+summary(brms_reg)
+
+
+cat("\n--- ICC Results ---\n")
+cat("Bayesian ICC (reg model):", round(icc_reg, 4), "\n")
+```
+
+
+## BRMS for regses
+
+```{r}
+library(dplyr)
+library(brms)
+
+# 1. Ensure the data is perfectly clean
+df_regses_final <- Final_Merged_2024_K12_Updated %>%
+  filter(!is.na(regses)) %>%
+  filter(!regses %in% c("NA_Female_NA", "NA_Male_NA", "NA")) %>%
+  mutate(regses = relevel(as.factor(regses), ref = "White_Female_0"))
+
+# 2. Final High-Precision Model Run
+# We increase iterations to 5,000 to ensure Bulk ESS > 400 for all parameters
+brms_regses_final <- brm(
+  formula = is_sped ~ regses + (1 | Schl),
+  data = df_regses_final,
+  family = bernoulli(link = "logit"),
+  chains = 4,
+  cores = 4,
+  iter = 5000,    # Increased from 2500 to boost ESS
+  warmup = 2500,  # Increased warmup for better initial mixing
+  backend = "rstan", 
+  control = list(
+    adapt_delta = 0.99,   # Keep high precision
+    max_treedepth = 15
+  ),
+  file = "brms_regses_final_production" 
+)
+
+# 3. Comprehensive Summary
+summary(brms_regses_final)
+
+# --- 3. Calculate Bayesian ICC ---
+# For Bernoulli models, latent ICC uses pi^2 / 3 for distribution-specific variance
+calc_bayesian_icc <- function(brms_regses) {
+  # Extract the school-level variance (intercept)
+  var_sch <- VarCorr(brms_regses)$Schl$sd[1]^2
+  var_resid <- (pi^2) / 3
+  icc <- var_sch / (var_sch + var_resid)
+  return(icc)
+}
+
+
+icc_regses <- calc_bayesian_icc(brms_regses)
+
+
+cat("\n--- ICC Results ---\n")
+cat("Bayesian ICC (regses model):", round(icc_regses, 4), "\n")
+```
+
+
+## Load files and run summaries
+
+```{r}
+brms_reg_model_production <- readRDS("S:/Ibrahim/UConn Spencer Project Analysis Delaware Data/brms_reg_model_production.rds")
+
+
+# Check the model summary to ensure it loaded correctly
+summary(brms_reg_model_production)
+
+
+# Install and load the necessary library
+if (!require("performance")) install.packages("performance")
+library(performance)
+
+# Calculate the ICC
+icc_results <- icc(brms_reg_model_production)
+print(icc_results)
+
+```
+
