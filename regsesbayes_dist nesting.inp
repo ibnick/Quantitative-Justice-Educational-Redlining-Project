@@ -1,0 +1,92 @@
+TITLE:  Bayesian Multi-Level Modeling - is_sped on regses categories;
+          Nesting by District (Refrence: White Females Resources)
+
+DATA:
+  FILE IS "S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt";
+
+VARIABLE: NAMES ARE Schl is_sped reg_num regses_num District;
+          USEVARIABLES ARE District is_sped
+          rs_aaf0 rs_aaf1 rs_aam0 rs_aam1 rs_aif0 rs_aif1 rs_aim0 rs_aim1
+          rs_asf0 rs_asf1 rs_asm0 rs_asm1 rs_hwf0 rs_hwf1 rs_hwm0 rs_hwm1
+          rs_hlf0 rs_hlf1 rs_hlm0 rs_hlm1 rs_mrf0 rs_mrf1 rs_mrm0 rs_mrm1
+          rs_wf1  rs_wm0  rs_wm1;
+
+CATEGORICAL is_sped;
+    CLUSTER IS District;
+    MISSING ARE ALL (-999); !tells MPLUS the empty cells are all NAs
+    WITHIN = rs_aaf0 rs_aaf1 rs_aam0 rs_aam1 rs_aif0 rs_aif1 rs_aim0 rs_aim1
+             rs_asf0 rs_asf1 rs_asm0 rs_asm1 rs_hwf0 rs_hwf1 rs_hwm0 rs_hwm1
+             rs_hlf0 rs_hlf1 rs_hlm0 rs_hlm1 rs_mrf0 rs_mrf1 rs_mrm0 rs_mrm1
+             rs_wf1  rs_wm0  rs_wm1;
+
+  DEFINE:
+    ! Reference Group: White_Female_0 (Code 27) - Excluded from definitions
+
+    ! African American Groups
+    rs_aaf0  = (regses_num == 1);   ! African American Female Non-SES
+    rs_aaf1  = (regses_num == 2);   ! African American Female Low-Income
+    rs_aam0  = (regses_num == 3);   ! African American Male Non-SES
+    rs_aam1  = (regses_num == 4);   ! African American Male Low-Income
+
+    ! American Indian Groups
+    rs_aif0  = (regses_num == 5);   ! American Indian Female Non-SES
+    rs_aif1  = (regses_num == 6);   ! American Indian Female Low-Income
+    rs_aim0  = (regses_num == 7);   ! American Indian Male Non-SES
+    rs_aim1  = (regses_num == 8);   ! American Indian Male Low-Income
+
+    ! Asian Groups
+    rs_asf0  = (regses_num == 9);   ! Asian Female Non-SES
+    rs_asf1  = (regses_num== 10);  ! Asian Female Low-Income
+    rs_asm0  = (regses_num == 11);  ! Asian Male Non-SES
+    rs_asm1  = (regses_num == 12);  ! Asian Male Low-Income
+
+    ! Hawaiian/Pacific Islander Groups
+    rs_hwf0  = (regses_num == 13);  ! Hawaiian Female Non-SES
+    rs_hwf1  = (regses_num == 14);  ! Hawaiian Female Low-Income
+    rs_hwm0  = (regses_num== 15);  ! Hawaiian Male Non-SES
+    rs_hwm1  = (regses_num == 16);  ! Hawaiian Male Low-Income
+
+    ! Hispanic/Latino Groups
+    rs_hlf0  = (regses_num == 17);  ! Hispanic/Latino Female Non-SES
+    rs_hlf1  = (regses_num== 18);  ! Hispanic/Latino Female Low-Income
+    rs_hlm0  = (regses_num == 19);  ! Hispanic/Latino Male Non-SES
+    rs_hlm1  = (regses_num == 20);  ! Hispanic/Latino Male Low-Income
+
+    ! Multi-Racial Groups
+    rs_mrf0  = (regses_num == 21);  ! Multi-Racial Female Non-SES
+    rs_mrf1  = (regses_num== 22);  ! Multi-Racial Female Low-Income
+    rs_mrm0  = (regses_num == 23);  ! Multi-Racial Male Non-SES
+    rs_mrm1  = (regses_num == 24);  ! Multi-Racial Male Low-Income
+
+    ! White Comparison Groups
+    rs_wf1   = (regses_num == 28);  ! White Female Low-Income
+    rs_wm0   = (regses_num == 29);  ! White Male Non-SES
+    rs_wm1   = (regses_num == 30);  ! White Male Low-Income
+
+  ANALYSIS:
+    TYPE = TWOLEVEL;
+    ESTIMATOR = BAYES;
+    PROCESSORS = 4;
+    BITERATIONS = (20000);
+    BCONVERGENCE = 0.05;
+
+MODEL:
+    %WITHIN%
+    is_sped ON rs_aaf0 rs_aaf1 rs_aam0 rs_aam1 rs_aif0 rs_aif1 rs_aim0 rs_aim1
+               rs_asf0 rs_asf1 rs_asm0 rs_asm1 rs_hwf0 rs_hwf1 rs_hwm0 rs_hwm1
+               rs_hlf0 rs_hlf1 rs_hlm0 rs_hlm1 rs_mrf0 rs_mrf1 rs_mrm0 rs_mrm1
+               rs_wf1  rs_wm0  rs_wm1;
+
+    %BETWEEN%
+    is_sped;
+
+  OUTPUT:
+    TECH1 TECH8 STANDARDIZED;
+  Savedata:
+    BPARAMETERS IS mcmc1.txt; ! File needed to run extra diagnostics in R
+
+
+
+
+
+
