@@ -1,0 +1,37 @@
+TITLE:  Bayesian Unconditional Multilevel Model
+
+DATA:
+  FILE IS "S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt";
+
+VARIABLE: NAMES ARE Schl is_sped reg_num regses_num District 
+          pct_black_c pct_latine_c pct_white_c 
+          pct_sped_c pct_low_ses_c pct_lep_c r_seg;
+          USEVARIABLES ARE r_seg;
+          
+! ordered categorical r_seg as (1,2,3,4)
+CATEGORICAL ARE r_seg;
+    CLUSTER IS Schl;
+    MISSING ARE ALL (-999); !tells MPLUS the empty cells are all NAs
+
+ANALYSIS:
+    TYPE = TWOLEVEL;
+    ESTIMATOR = BAYES;
+    PROCESSORS = 4;
+    BITERATIONS = (20000);
+    BCONVERGENCE = 0.05;
+
+MODEL:
+    %WITHIN%
+
+    %BETWEEN%
+    r_seg;                  !Unconditional
+
+OUTPUT:
+    TECH1 TECH8 STANDARDIZED;
+
+PLOT:
+    TYPE = PLOT2;
+
+
+
+
