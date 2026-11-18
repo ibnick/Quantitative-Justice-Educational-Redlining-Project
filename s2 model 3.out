@@ -1,0 +1,2937 @@
+Mplus VERSION 8.11
+MUTHEN & MUTHEN
+11/18/2026  10:10 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:  Set 2 Model 3- students in schools in districts (state); is_sped on regses;
+          random intercept + random slopes for selected regses groups varying
+          across schools and districts;
+          level-2 %low ses + % black + % latine predict intercept and slopes/
+          regses ref = White_Female_0 (regses = 27)
+
+  DATA:
+    FILE IS "S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt";
+
+  VARIABLE: NAMES ARE Schl is_sped reg_num regses_num District
+            blk_c lat_c wht_c
+            sped_c lses_c lep_c r_seg p_sped;
+            USEVARIABLES ARE is_sped
+            blk_c lat_c lses_c
+            rs_aaf0 rs_aaf1 rs_aam0 rs_aam1 rs_aif0 rs_aif1 rs_aim0 rs_aim1
+            rs_asf0 rs_asf1 rs_asm0 rs_asm1 rs_hwf0 rs_hwf1 rs_hwm0 rs_hwm1
+            rs_hlf0 rs_hlf1 rs_hlm0 rs_hlm1 rs_mrf0 rs_mrf1 rs_mrm0 rs_mrm1
+            rs_wf1  rs_wm0  rs_wm1;
+           !pct_white_c is removed from the USEVARIABLES as a reference
+
+      CATEGORICAL is_sped;
+      CLUSTER IS District Schl;
+      MISSING ARE ALL (-999); !tells MPLUS the empty cells are all NAs
+      WITHIN = rs_aaf0 rs_aaf1 rs_aam0 rs_aam1 rs_aif0 rs_aif1 rs_aim0 rs_aim1
+               rs_asf0 rs_asf1 rs_asm0 rs_asm1 rs_hwf0 rs_hwf1 rs_hwm0 rs_hwm1
+               rs_hlf0 rs_hlf1 rs_hlm0 rs_hlm1 rs_mrf0 rs_mrf1 rs_mrm0 rs_mrm1
+               rs_wf1  rs_wm0  rs_wm1;
+     BETWEEN = (Schl) blk_c lat_c lses_c;
+
+    DEFINE:
+      ! Reference Group: White_Female_0 (Code 27) - Excluded from definitions
+
+      ! African American Groups
+      rs_aaf0  = (regses_num == 1);   ! African American Female Non-SES
+      rs_aaf1  = (regses_num == 2);   ! African American Female Low-Income
+      rs_aam0  = (regses_num == 3);   ! African American Male Non-SES
+      rs_aam1  = (regses_num == 4);   ! African American Male Low-Income
+
+      ! American Indian Groups
+      rs_aif0  = (regses_num == 5);   ! American Indian Female Non-SES
+      rs_aif1  = (regses_num == 6);   ! American Indian Female Low-Income
+      rs_aim0  = (regses_num == 7);   ! American Indian Male Non-SES
+      rs_aim1  = (regses_num == 8);   ! American Indian Male Low-Income
+
+      ! Asian Groups
+      rs_asf0  = (regses_num == 9);   ! Asian Female Non-SES
+      rs_asf1  = (regses_num== 10);  ! Asian Female Low-Income
+      rs_asm0  = (regses_num == 11);  ! Asian Male Non-SES
+      rs_asm1  = (regses_num == 12);  ! Asian Male Low-Income
+
+      ! Hawaiian/Pacific Islander Groups
+      rs_hwf0  = (regses_num == 13);  ! Hawaiian Female Non-SES
+      rs_hwf1  = (regses_num == 14);  ! Hawaiian Female Low-Income
+      rs_hwm0  = (regses_num== 15);  ! Hawaiian Male Non-SES
+      rs_hwm1  = (regses_num == 16);  ! Hawaiian Male Low-Income
+
+      ! Hispanic/Latino Groups
+      rs_hlf0  = (regses_num == 17);  ! Hispanic/Latino Female Non-SES
+      rs_hlf1  = (regses_num== 18);  ! Hispanic/Latino Female Low-Income
+      rs_hlm0  = (regses_num == 19);  ! Hispanic/Latino Male Non-SES
+      rs_hlm1  = (regses_num == 20);  ! Hispanic/Latino Male Low-Income
+
+      ! Multi-Racial Groups
+      rs_mrf0  = (regses_num == 21);  ! Multi-Racial Female Non-SES
+      rs_mrf1  = (regses_num== 22);  ! Multi-Racial Female Low-Income
+      rs_mrm0  = (regses_num == 23);  ! Multi-Racial Male Non-SES
+      rs_mrm1  = (regses_num == 24);  ! Multi-Racial Male Low-Income
+
+      ! White Comparison Groups
+      rs_wf1   = (regses_num == 28);  ! White Female Low-Income
+      rs_wm0   = (regses_num == 29);  ! White Male Non-SES
+      rs_wm1   = (regses_num == 30);  ! White Male Low-Income
+
+    ANALYSIS:
+      TYPE = THREELEVEL RANDOM;
+      ESTIMATOR = BAYES;
+      PROCESSORS = 4;
+      CHAINS = 4;
+      BITERATIONS = 100000(20000);
+      BCONVERGENCE = 0.05;
+
+  MODEL:
+
+      %WITHIN%
+  ! Random Slopes: define latent random slope variables (vs WHite_Female_0)
+      s1 | is_sped ON rs_aaf0; !African American Female_0
+      s2 | is_sped ON rs_aaf1; !African American Female_1
+      s3 | is_sped ON rs_aam0; !African American Male_0
+      s4 | is_sped ON rs_aam1; !African American Male_1
+      s17| is_sped ON rs_hlf0; !Hispanic/Latino Female_0
+      s18| is_sped ON rs_hlf1; !Hispanic/Latino Female_1
+      s19| is_sped ON rs_hlm0; !Hispanic/Latino Male_0
+      s20| is_sped ON rs_hlm1; !Hispanic/Latino Male_1
+
+
+   ! Fixed Slopes: all other regses groups
+      is_sped ON rs_aif0 rs_aif1 rs_aim0 rs_aim1
+                 rs_asf0 rs_asf1 rs_asm0 rs_asm1
+                 rs_hwf0 rs_hwf1 rs_hwm0 rs_hwm1
+                 rs_mrf0 rs_mrf1 rs_mrm0 rs_mrm1
+                 rs_wf1  rs_wm0  rs_wm1;
+
+
+      %BETWEEN Schl%
+      !School-level:Intercept and Slopes on school composition (cross-level Interaction):
+      is_sped s1 s2 s3 s4 s17 s18 s19 s20 ON blk_c lat_c lses_c;
+
+      ! Allow the random intercept and radnom slopes to correlate
+      is_sped WITH s1 s2 s3 s4 s17 s18 s19 s20;
+      s1 WITH s2 s3 s4 s17 s18 s19 s20;
+      s2 WITH s3 s4 s17 s18 s19 s20;
+      s3 WITH s4 s17 s18 s19 s20;
+      s4 WITH s17 s18 s19 s20;
+      s17 WITH s18 s19 s20;
+      s18 WITH s19 s20;
+      s19 WITH s20;
+
+      %BETWEEN District%
+      is_sped; !district random intercept only (slopes vary across schools only)
+
+
+    OUTPUT:
+      TECH1 TECH8;
+      PLOT:
+      TYPE = PLOT2
+
+
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Set 2 Model 3- students in schools in districts (state); is_sped on regses;
+random intercept + random slopes for selected regses groups varying
+across schools and districts;
+level-2 %low ses + % black + % latine predict intercept and slopes/
+regses ref = White_Female_0 (regses = 27)
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                      139601
+
+Number of dependent variables                                    1
+Number of independent variables                                 30
+Number of continuous latent variables                            8
+
+Observed dependent variables
+
+  Binary and ordered categorical (ordinal)
+   IS_SPED
+
+Observed independent variables
+   BLK_C       LAT_C       LSES_C      RS_AAF0     RS_AAF1     RS_AAM0
+   RS_AAM1     RS_AIF0     RS_AIF1     RS_AIM0     RS_AIM1     RS_ASF0
+   RS_ASF1     RS_ASM0     RS_ASM1     RS_HWF0     RS_HWF1     RS_HWM0
+   RS_HWM1     RS_HLF0     RS_HLF1     RS_HLM0     RS_HLM1     RS_MRF0
+   RS_MRF1     RS_MRM0     RS_MRM1     RS_WF1      RS_WM0      RS_WM1
+
+Continuous latent variables
+   S1          S2          S3          S4          S17         S18
+   S19         S20
+
+Variables with special functions
+
+  Cluster variables     DISTRICT  SCHL
+
+  Within variables
+   RS_AAF0     RS_AAF1     RS_AAM0     RS_AAM1     RS_AIF0     RS_AIF1
+   RS_AIM0     RS_AIM1     RS_ASF0     RS_ASF1     RS_ASM0     RS_ASM1
+   RS_HWF0     RS_HWF1     RS_HWM0     RS_HWM1     RS_HLF0     RS_HLF1
+   RS_HLM0     RS_HLM1     RS_MRF0     RS_MRF1     RS_MRM0     RS_MRM1
+   RS_WF1      RS_WM0      RS_WM1
+
+  Level 2 between variables
+   BLK_C       LAT_C       LSES_C
+
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               4
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                              100000
+  K-th iteration used for thinning                               1
+Link                                                        PROBIT
+
+Input data file(s)
+  S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of SCHL clusters                   222
+     Number of DISTRICT clusters                40
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns             1
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              IS_SPED       BLK_C         LAT_C         LSES_C        RS_AAF0
+              ________      ________      ________      ________      ________
+ IS_SPED        1.000
+ BLK_C          1.000         1.000
+ LAT_C          1.000         1.000         1.000
+ LSES_C         1.000         1.000         1.000         1.000
+ RS_AAF0        1.000         1.000         1.000         1.000         1.000
+ RS_AAF1        1.000         1.000         1.000         1.000         1.000
+ RS_AAM0        1.000         1.000         1.000         1.000         1.000
+ RS_AAM1        1.000         1.000         1.000         1.000         1.000
+ RS_AIF0        1.000         1.000         1.000         1.000         1.000
+ RS_AIF1        1.000         1.000         1.000         1.000         1.000
+ RS_AIM0        1.000         1.000         1.000         1.000         1.000
+ RS_AIM1        1.000         1.000         1.000         1.000         1.000
+ RS_ASF0        1.000         1.000         1.000         1.000         1.000
+ RS_ASF1        1.000         1.000         1.000         1.000         1.000
+ RS_ASM0        1.000         1.000         1.000         1.000         1.000
+ RS_ASM1        1.000         1.000         1.000         1.000         1.000
+ RS_HWF0        1.000         1.000         1.000         1.000         1.000
+ RS_HWF1        1.000         1.000         1.000         1.000         1.000
+ RS_HWM0        1.000         1.000         1.000         1.000         1.000
+ RS_HWM1        1.000         1.000         1.000         1.000         1.000
+ RS_HLF0        1.000         1.000         1.000         1.000         1.000
+ RS_HLF1        1.000         1.000         1.000         1.000         1.000
+ RS_HLM0        1.000         1.000         1.000         1.000         1.000
+ RS_HLM1        1.000         1.000         1.000         1.000         1.000
+ RS_MRF0        1.000         1.000         1.000         1.000         1.000
+ RS_MRF1        1.000         1.000         1.000         1.000         1.000
+ RS_MRM0        1.000         1.000         1.000         1.000         1.000
+ RS_MRM1        1.000         1.000         1.000         1.000         1.000
+ RS_WF1         1.000         1.000         1.000         1.000         1.000
+ RS_WM0         1.000         1.000         1.000         1.000         1.000
+ RS_WM1         1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              RS_AAF1       RS_AAM0       RS_AAM1       RS_AIF0       RS_AIF1
+              ________      ________      ________      ________      ________
+ RS_AAF1        1.000
+ RS_AAM0        1.000         1.000
+ RS_AAM1        1.000         1.000         1.000
+ RS_AIF0        1.000         1.000         1.000         1.000
+ RS_AIF1        1.000         1.000         1.000         1.000         1.000
+ RS_AIM0        1.000         1.000         1.000         1.000         1.000
+ RS_AIM1        1.000         1.000         1.000         1.000         1.000
+ RS_ASF0        1.000         1.000         1.000         1.000         1.000
+ RS_ASF1        1.000         1.000         1.000         1.000         1.000
+ RS_ASM0        1.000         1.000         1.000         1.000         1.000
+ RS_ASM1        1.000         1.000         1.000         1.000         1.000
+ RS_HWF0        1.000         1.000         1.000         1.000         1.000
+ RS_HWF1        1.000         1.000         1.000         1.000         1.000
+ RS_HWM0        1.000         1.000         1.000         1.000         1.000
+ RS_HWM1        1.000         1.000         1.000         1.000         1.000
+ RS_HLF0        1.000         1.000         1.000         1.000         1.000
+ RS_HLF1        1.000         1.000         1.000         1.000         1.000
+ RS_HLM0        1.000         1.000         1.000         1.000         1.000
+ RS_HLM1        1.000         1.000         1.000         1.000         1.000
+ RS_MRF0        1.000         1.000         1.000         1.000         1.000
+ RS_MRF1        1.000         1.000         1.000         1.000         1.000
+ RS_MRM0        1.000         1.000         1.000         1.000         1.000
+ RS_MRM1        1.000         1.000         1.000         1.000         1.000
+ RS_WF1         1.000         1.000         1.000         1.000         1.000
+ RS_WM0         1.000         1.000         1.000         1.000         1.000
+ RS_WM1         1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              RS_AIM0       RS_AIM1       RS_ASF0       RS_ASF1       RS_ASM0
+              ________      ________      ________      ________      ________
+ RS_AIM0        1.000
+ RS_AIM1        1.000         1.000
+ RS_ASF0        1.000         1.000         1.000
+ RS_ASF1        1.000         1.000         1.000         1.000
+ RS_ASM0        1.000         1.000         1.000         1.000         1.000
+ RS_ASM1        1.000         1.000         1.000         1.000         1.000
+ RS_HWF0        1.000         1.000         1.000         1.000         1.000
+ RS_HWF1        1.000         1.000         1.000         1.000         1.000
+ RS_HWM0        1.000         1.000         1.000         1.000         1.000
+ RS_HWM1        1.000         1.000         1.000         1.000         1.000
+ RS_HLF0        1.000         1.000         1.000         1.000         1.000
+ RS_HLF1        1.000         1.000         1.000         1.000         1.000
+ RS_HLM0        1.000         1.000         1.000         1.000         1.000
+ RS_HLM1        1.000         1.000         1.000         1.000         1.000
+ RS_MRF0        1.000         1.000         1.000         1.000         1.000
+ RS_MRF1        1.000         1.000         1.000         1.000         1.000
+ RS_MRM0        1.000         1.000         1.000         1.000         1.000
+ RS_MRM1        1.000         1.000         1.000         1.000         1.000
+ RS_WF1         1.000         1.000         1.000         1.000         1.000
+ RS_WM0         1.000         1.000         1.000         1.000         1.000
+ RS_WM1         1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              RS_ASM1       RS_HWF0       RS_HWF1       RS_HWM0       RS_HWM1
+              ________      ________      ________      ________      ________
+ RS_ASM1        1.000
+ RS_HWF0        1.000         1.000
+ RS_HWF1        1.000         1.000         1.000
+ RS_HWM0        1.000         1.000         1.000         1.000
+ RS_HWM1        1.000         1.000         1.000         1.000         1.000
+ RS_HLF0        1.000         1.000         1.000         1.000         1.000
+ RS_HLF1        1.000         1.000         1.000         1.000         1.000
+ RS_HLM0        1.000         1.000         1.000         1.000         1.000
+ RS_HLM1        1.000         1.000         1.000         1.000         1.000
+ RS_MRF0        1.000         1.000         1.000         1.000         1.000
+ RS_MRF1        1.000         1.000         1.000         1.000         1.000
+ RS_MRM0        1.000         1.000         1.000         1.000         1.000
+ RS_MRM1        1.000         1.000         1.000         1.000         1.000
+ RS_WF1         1.000         1.000         1.000         1.000         1.000
+ RS_WM0         1.000         1.000         1.000         1.000         1.000
+ RS_WM1         1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              RS_HLF0       RS_HLF1       RS_HLM0       RS_HLM1       RS_MRF0
+              ________      ________      ________      ________      ________
+ RS_HLF0        1.000
+ RS_HLF1        1.000         1.000
+ RS_HLM0        1.000         1.000         1.000
+ RS_HLM1        1.000         1.000         1.000         1.000
+ RS_MRF0        1.000         1.000         1.000         1.000         1.000
+ RS_MRF1        1.000         1.000         1.000         1.000         1.000
+ RS_MRM0        1.000         1.000         1.000         1.000         1.000
+ RS_MRM1        1.000         1.000         1.000         1.000         1.000
+ RS_WF1         1.000         1.000         1.000         1.000         1.000
+ RS_WM0         1.000         1.000         1.000         1.000         1.000
+ RS_WM1         1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              RS_MRF1       RS_MRM0       RS_MRM1       RS_WF1        RS_WM0
+              ________      ________      ________      ________      ________
+ RS_MRF1        1.000
+ RS_MRM0        1.000         1.000
+ RS_MRM1        1.000         1.000         1.000
+ RS_WF1         1.000         1.000         1.000         1.000
+ RS_WM0         1.000         1.000         1.000         1.000         1.000
+ RS_WM1         1.000         1.000         1.000         1.000         1.000
+
+
+           Covariance Coverage
+              RS_WM1
+              ________
+ RS_WM1         1.000
+
+
+UNIVARIATE PROPORTIONS AND COUNTS FOR CATEGORICAL VARIABLES
+
+    IS_SPED
+      Category 1    0.829       115683.000
+      Category 2    0.171        23918.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     BLK_C                 0.000       0.961     -33.106    0.45%     -17.158     -6.490     -2.672
+             222.000     381.089       0.912      63.566    0.45%       0.767     13.543
+     LAT_C                 0.000       1.738     -19.062    0.45%     -10.756     -7.000     -4.611
+             222.000     196.504       3.757      66.404    0.45%      -1.103      7.841
+     LSES_C                0.000       0.542     -29.306    0.45%     -13.258     -4.046     -0.655
+             222.000     226.727       0.135      45.385    0.45%       2.012     11.704
+     RS_AAF0               0.086       2.946       0.000   91.37%       0.000      0.000      0.000
+          139601.000       0.079       6.678       1.000    8.63%       0.000      0.000
+     RS_AAF1               0.064       3.555       0.000   93.58%       0.000      0.000      0.000
+          139601.000       0.060      10.640       1.000    6.42%       0.000      0.000
+     RS_AAM0               0.091       2.840       0.000   90.88%       0.000      0.000      0.000
+          139601.000       0.083       6.064       1.000    9.12%       0.000      0.000
+     RS_AAM1               0.066       3.503       0.000   93.42%       0.000      0.000      0.000
+          139601.000       0.061      10.269       1.000    6.58%       0.000      0.000
+     RS_AIF0               0.001      26.839       0.000   99.86%       0.000      0.000      0.000
+          139601.000       0.001     718.323       1.000    0.14%       0.000      0.000
+     RS_AIF1               0.001      40.975       0.000   99.94%       0.000      0.000      0.000
+          139601.000       0.001    1676.940       1.000    0.06%       0.000      0.000
+     RS_AIM0               0.001      26.429       0.000   99.86%       0.000      0.000      0.000
+          139601.000       0.001     696.514       1.000    0.14%       0.000      0.000
+     RS_AIM1               0.001      41.479       0.000   99.94%       0.000      0.000      0.000
+          139601.000       0.001    1718.470       1.000    0.06%       0.000      0.000
+     RS_ASF0               0.019       6.969       0.000   98.06%       0.000      0.000      0.000
+          139601.000       0.019      46.571       1.000    1.94%       0.000      0.000
+     RS_ASF1               0.002      24.630       0.000   99.84%       0.000      0.000      0.000
+          139601.000       0.002     604.613       1.000    0.16%       0.000      0.000
+     RS_ASM0               0.022       6.589       0.000   97.84%       0.000      0.000      0.000
+          139601.000       0.021      41.417       1.000    2.16%       0.000      0.000
+     RS_ASM1               0.002      24.157       0.000   99.83%       0.000      0.000      0.000
+          139601.000       0.002     581.561       1.000    0.17%       0.000      0.000
+     RS_HWF0               0.000      45.276       0.000   99.95%       0.000      0.000      0.000
+          139601.000       0.000    2047.956       1.000    0.05%       0.000      0.000
+     RS_HWF1               0.000      73.255       0.000   99.98%       0.000      0.000      0.000
+          139601.000       0.000    5364.269       1.000    0.02%       0.000      0.000
+     RS_HWM0               0.001      44.624       0.000   99.95%       0.000      0.000      0.000
+          139601.000       0.001    1989.301       1.000    0.05%       0.000      0.000
+     RS_HWM1               0.000      83.529       0.000   99.99%       0.000      0.000      0.000
+          139601.000       0.000    6975.050       1.000    0.01%       0.000      0.000
+     RS_HLF0               0.069       3.389       0.000   93.06%       0.000      0.000      0.000
+          139601.000       0.065       9.486       1.000    6.94%       0.000      0.000
+     RS_HLF1               0.028       5.708       0.000   97.19%       0.000      0.000      0.000
+          139601.000       0.027      30.578       1.000    2.81%       0.000      0.000
+     RS_HLM0               0.071       3.340       0.000   92.90%       0.000      0.000      0.000
+          139601.000       0.066       9.158       1.000    7.10%       0.000      0.000
+     RS_HLM1               0.028       5.737       0.000   97.21%       0.000      0.000      0.000
+          139601.000       0.027      30.916       1.000    2.79%       0.000      0.000
+     RS_MRF0               0.018       7.314       0.000   98.23%       0.000      0.000      0.000
+          139601.000       0.017      51.491       1.000    1.77%       0.000      0.000
+     RS_MRF1               0.010      10.032       0.000   99.04%       0.000      0.000      0.000
+          139601.000       0.010      98.648       1.000    0.96%       0.000      0.000
+     RS_MRM0               0.018       7.217       0.000   98.18%       0.000      0.000      0.000
+          139601.000       0.018      50.088       1.000    1.82%       0.000      0.000
+     RS_MRM1               0.009      10.303       0.000   99.08%       0.000      0.000      0.000
+          139601.000       0.009     104.158       1.000    0.92%       0.000      0.000
+     RS_WF1                0.030       5.473       0.000   96.96%       0.000      0.000      0.000
+          139601.000       0.029      27.948       1.000    3.04%       0.000      0.000
+     RS_WM0                0.170       1.758       0.000   83.01%       0.000      0.000      0.000
+          139601.000       0.141       1.091       1.000   16.99%       0.000      0.000
+     RS_WM1                0.033       5.237       0.000   96.71%       0.000      0.000      0.000
+          139601.000       0.032      25.422       1.000    3.29%       0.000      0.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                             109
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+ IS_SPED    ON
+    RS_AIF0            0.019       0.121      0.441      -0.225       0.249
+    RS_AIF1            0.158       0.170      0.178      -0.183       0.481
+    RS_AIM0            0.388       0.102      0.000       0.183       0.582      *
+    RS_AIM1            0.493       0.153      0.001       0.186       0.785      *
+    RS_ASF0           -0.538       0.048      0.000      -0.636      -0.446      *
+    RS_ASF1           -0.404       0.139      0.001      -0.686      -0.143      *
+    RS_ASM0           -0.081       0.036      0.011      -0.151      -0.011      *
+    RS_ASM1            0.105       0.103      0.157      -0.100       0.304
+    RS_HWF0            0.289       0.181      0.060      -0.075       0.633
+    RS_HWF1           -0.603       0.474      0.073      -1.676       0.186
+    RS_HWM0            0.047       0.197      0.407      -0.356       0.412
+    RS_HWM1            0.383       0.326      0.124      -0.284       0.998
+    RS_MRF0           -0.044       0.036      0.113      -0.114       0.027
+    RS_MRF1            0.155       0.044      0.000       0.070       0.241      *
+    RS_MRM0            0.304       0.032      0.000       0.242       0.367      *
+    RS_MRM1            0.614       0.040      0.000       0.537       0.692      *
+    RS_WF1             0.371       0.025      0.000       0.322       0.420      *
+    RS_WM0             0.317       0.015      0.000       0.288       0.346      *
+    RS_WM1             0.666       0.023      0.000       0.621       0.712      *
+
+Between SCHL Level
+
+ S1         ON
+    BLK_C             -0.002       0.003      0.201      -0.007       0.003
+    LAT_C             -0.005       0.003      0.042      -0.010       0.001
+    LSES_C            -0.004       0.003      0.103      -0.011       0.002
+
+ S2         ON
+    BLK_C             -0.004       0.003      0.047      -0.009       0.001
+    LAT_C             -0.006       0.003      0.010      -0.012      -0.001      *
+    LSES_C            -0.001       0.003      0.349      -0.008       0.005
+
+ S3         ON
+    BLK_C             -0.006       0.002      0.004      -0.010      -0.001      *
+    LAT_C             -0.005       0.002      0.012      -0.010      -0.001      *
+    LSES_C             0.002       0.003      0.220      -0.003       0.008
+
+ S4         ON
+    BLK_C             -0.005       0.002      0.009      -0.010      -0.001      *
+    LAT_C             -0.006       0.002      0.008      -0.010      -0.001      *
+    LSES_C            -0.001       0.003      0.415      -0.006       0.005
+
+ S17        ON
+    BLK_C              0.000       0.003      0.498      -0.006       0.005
+    LAT_C             -0.004       0.002      0.068      -0.008       0.001
+    LSES_C            -0.005       0.004      0.084      -0.012       0.002
+
+ S18        ON
+    BLK_C              0.003       0.004      0.211      -0.004       0.011
+    LAT_C             -0.004       0.003      0.099      -0.010       0.002
+    LSES_C            -0.010       0.005      0.016      -0.020      -0.001      *
+
+ S19        ON
+    BLK_C             -0.003       0.003      0.165      -0.008       0.003
+    LAT_C             -0.005       0.002      0.015      -0.010       0.000      *
+    LSES_C             0.000       0.004      0.459      -0.007       0.007
+
+ S20        ON
+    BLK_C             -0.003       0.003      0.161      -0.009       0.003
+    LAT_C             -0.007       0.003      0.003      -0.013      -0.002      *
+    LSES_C             0.000       0.004      0.477      -0.008       0.008
+
+ IS_SPED    ON
+    BLK_C             -0.001       0.003      0.391      -0.006       0.004
+    LAT_C              0.001       0.003      0.413      -0.004       0.006
+    LSES_C             0.009       0.003      0.004       0.002       0.015      *
+
+ IS_SPED  WITH
+    S1                 0.018       0.014      0.091      -0.009       0.048
+    S2                 0.022       0.017      0.086      -0.009       0.056
+    S3                 0.003       0.012      0.412      -0.022       0.027
+    S4                 0.002       0.014      0.439      -0.026       0.028
+    S17                0.019       0.015      0.098      -0.010       0.051
+    S18                0.001       0.021      0.483      -0.040       0.044
+    S19                0.024       0.015      0.046      -0.004       0.054
+    S20                0.010       0.018      0.285      -0.024       0.047
+
+ S1       WITH
+    S2                 0.028       0.010      0.000       0.011       0.052      *
+    S3                 0.021       0.008      0.001       0.008       0.038      *
+    S4                 0.021       0.008      0.002       0.006       0.039      *
+    S17                0.017       0.009      0.018       0.001       0.036      *
+    S18                0.016       0.011      0.053      -0.003       0.040
+    S19                0.012       0.009      0.062      -0.003       0.031
+    S20                0.014       0.010      0.057      -0.003       0.035
+
+ S2       WITH
+    S3                 0.021       0.008      0.001       0.007       0.039      *
+    S4                 0.023       0.009      0.002       0.007       0.043      *
+    S17                0.016       0.010      0.032      -0.001       0.038
+    S18                0.018       0.012      0.053      -0.004       0.044
+    S19                0.012       0.009      0.076      -0.004       0.033
+    S20                0.017       0.011      0.037      -0.002       0.042
+
+ S3       WITH
+    S4                 0.018       0.007      0.001       0.006       0.032      *
+    S17                0.010       0.007      0.064      -0.003       0.026
+    S18                0.013       0.009      0.047      -0.002       0.032
+    S19                0.011       0.007      0.052      -0.002       0.026
+    S20                0.011       0.008      0.064      -0.003       0.028
+
+ S4       WITH
+    S17                0.013       0.008      0.043      -0.002       0.030
+    S18                0.015       0.009      0.041      -0.002       0.035
+    S19                0.013       0.008      0.036      -0.001       0.029
+    S20                0.016       0.009      0.021       0.001       0.035      *
+
+ S17      WITH
+    S18                0.013       0.010      0.082      -0.005       0.036
+    S19                0.016       0.009      0.018       0.001       0.035      *
+    S20                0.009       0.009      0.151      -0.008       0.029
+
+ S18      WITH
+    S19                0.019       0.011      0.028       0.000       0.043
+    S20                0.014       0.011      0.083      -0.006       0.039
+
+ S19      WITH
+    S20                0.017       0.010      0.020       0.001       0.040      *
+
+ Residual Variances
+    IS_SPED            0.143       0.018      0.000       0.112       0.183      *
+    S1                 0.061       0.013      0.000       0.041       0.091      *
+    S2                 0.069       0.015      0.000       0.046       0.105      *
+    S3                 0.045       0.008      0.000       0.032       0.064      *
+    S4                 0.053       0.010      0.000       0.036       0.076      *
+    S17                0.053       0.012      0.000       0.035       0.081      *
+    S18                0.069       0.017      0.000       0.043       0.110      *
+    S19                0.056       0.012      0.000       0.037       0.085      *
+    S20                0.059       0.015      0.000       0.038       0.094      *
+
+Between DISTRICT Level
+
+ Means
+    S1                 0.033       0.034      0.162      -0.032       0.103
+    S2                 0.237       0.036      0.000       0.165       0.306      *
+    S3                 0.420       0.032      0.000       0.356       0.480      *
+    S4                 0.599       0.031      0.000       0.538       0.660      *
+    S17               -0.103       0.037      0.002      -0.179      -0.034      *
+    S18                0.175       0.053      0.001       0.072       0.283      *
+    S19                0.229       0.038      0.000       0.154       0.302      *
+    S20                0.509       0.040      0.000       0.432       0.587      *
+
+ Thresholds
+    IS_SPED$1          1.161       0.038      0.000       1.090       1.241      *
+
+ Variances
+    IS_SPED            0.009       0.010      0.000       0.001       0.037      *
+    S1                 0.005       0.006      0.000       0.001       0.024      *
+    S2                 0.005       0.006      0.000       0.001       0.024      *
+    S3                 0.004       0.005      0.000       0.001       0.020      *
+    S4                 0.003       0.004      0.000       0.001       0.015      *
+    S17                0.004       0.006      0.000       0.001       0.023      *
+    S18                0.019       0.022      0.000       0.002       0.083      *
+    S19                0.008       0.009      0.000       0.001       0.034      *
+    S20                0.004       0.006      0.000       0.001       0.024      *
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+           TAU
+              IS_SPED$
+              ________
+                    0
+
+
+           NU
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           NU
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+                    0             0             0
+
+
+           LAMBDA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           LAMBDA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           LAMBDA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           LAMBDA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           LAMBDA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           LAMBDA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ IS_SPED            0             0             0
+ RS_AAF0            0             0             0
+ RS_AAF1            0             0             0
+ RS_AAM0            0             0             0
+ RS_AAM1            0             0             0
+ RS_AIF0            0             0             0
+ RS_AIF1            0             0             0
+ RS_AIM0            0             0             0
+ RS_AIM1            0             0             0
+ RS_ASF0            0             0             0
+ RS_ASF1            0             0             0
+ RS_ASM0            0             0             0
+ RS_ASM1            0             0             0
+ RS_HWF0            0             0             0
+ RS_HWF1            0             0             0
+ RS_HWM0            0             0             0
+ RS_HWM1            0             0             0
+ RS_HLF0            0             0             0
+ RS_HLF1            0             0             0
+ RS_HLM0            0             0             0
+ RS_HLM1            0             0             0
+ RS_MRF0            0             0             0
+ RS_MRF1            0             0             0
+ RS_MRM0            0             0             0
+ RS_MRM1            0             0             0
+ RS_WF1             0             0             0
+ RS_WM0             0             0             0
+ RS_WM1             0             0             0
+
+
+           THETA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED            0
+ RS_AAF0            0             0
+ RS_AAF1            0             0             0
+ RS_AAM0            0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           THETA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ RS_AIF0            0
+ RS_AIF1            0             0
+ RS_AIM0            0             0             0
+ RS_AIM1            0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           THETA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ RS_ASF1            0
+ RS_ASM0            0             0
+ RS_ASM1            0             0             0
+ RS_HWF0            0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           THETA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ RS_HWM0            0
+ RS_HWM1            0             0
+ RS_HLF0            0             0             0
+ RS_HLF1            0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           THETA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ RS_HLM1            0
+ RS_MRF0            0             0
+ RS_MRF1            0             0             0
+ RS_MRM0            0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           THETA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ RS_WF1             0
+ RS_WM0             0             0
+ RS_WM1             0             0             0
+
+
+           ALPHA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+                    0             0             0
+
+
+           BETA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           BETA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ IS_SPED            1             2             3             4             5
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           BETA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ IS_SPED            6             7             8             9            10
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           BETA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ IS_SPED           11            12             0             0             0
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           BETA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ IS_SPED            0            13            14            15            16
+ RS_AAF0            0             0             0             0             0
+ RS_AAF1            0             0             0             0             0
+ RS_AAM0            0             0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           BETA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ IS_SPED           17            18            19
+ RS_AAF0            0             0             0
+ RS_AAF1            0             0             0
+ RS_AAM0            0             0             0
+ RS_AAM1            0             0             0
+ RS_AIF0            0             0             0
+ RS_AIF1            0             0             0
+ RS_AIM0            0             0             0
+ RS_AIM1            0             0             0
+ RS_ASF0            0             0             0
+ RS_ASF1            0             0             0
+ RS_ASM0            0             0             0
+ RS_ASM1            0             0             0
+ RS_HWF0            0             0             0
+ RS_HWF1            0             0             0
+ RS_HWM0            0             0             0
+ RS_HWM1            0             0             0
+ RS_HLF0            0             0             0
+ RS_HLF1            0             0             0
+ RS_HLM0            0             0             0
+ RS_HLM1            0             0             0
+ RS_MRF0            0             0             0
+ RS_MRF1            0             0             0
+ RS_MRM0            0             0             0
+ RS_MRM1            0             0             0
+ RS_WF1             0             0             0
+ RS_WM0             0             0             0
+ RS_WM1             0             0             0
+
+
+           PSI
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED            0
+ RS_AAF0            0             0
+ RS_AAF1            0             0             0
+ RS_AAM0            0             0             0             0
+ RS_AAM1            0             0             0             0             0
+ RS_AIF0            0             0             0             0             0
+ RS_AIF1            0             0             0             0             0
+ RS_AIM0            0             0             0             0             0
+ RS_AIM1            0             0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           PSI
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ RS_AIF0            0
+ RS_AIF1            0             0
+ RS_AIM0            0             0             0
+ RS_AIM1            0             0             0             0
+ RS_ASF0            0             0             0             0             0
+ RS_ASF1            0             0             0             0             0
+ RS_ASM0            0             0             0             0             0
+ RS_ASM1            0             0             0             0             0
+ RS_HWF0            0             0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           PSI
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ RS_ASF1            0
+ RS_ASM0            0             0
+ RS_ASM1            0             0             0
+ RS_HWF0            0             0             0             0
+ RS_HWF1            0             0             0             0             0
+ RS_HWM0            0             0             0             0             0
+ RS_HWM1            0             0             0             0             0
+ RS_HLF0            0             0             0             0             0
+ RS_HLF1            0             0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           PSI
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ RS_HWM0            0
+ RS_HWM1            0             0
+ RS_HLF0            0             0             0
+ RS_HLF1            0             0             0             0
+ RS_HLM0            0             0             0             0             0
+ RS_HLM1            0             0             0             0             0
+ RS_MRF0            0             0             0             0             0
+ RS_MRF1            0             0             0             0             0
+ RS_MRM0            0             0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           PSI
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ RS_HLM1            0
+ RS_MRF0            0             0
+ RS_MRF1            0             0             0
+ RS_MRM0            0             0             0             0
+ RS_MRM1            0             0             0             0             0
+ RS_WF1             0             0             0             0             0
+ RS_WM0             0             0             0             0             0
+ RS_WM1             0             0             0             0             0
+
+
+           PSI
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ RS_WF1             0
+ RS_WM0             0             0
+ RS_WM1             0             0             0
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN SCHL
+
+
+           TAU
+              IS_SPED$
+              ________
+                    0
+
+
+           NU
+              IS_SPED       BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+                    0             0             0             0
+
+
+           LAMBDA
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ BLK_C              0             0             0             0             0
+ LAT_C              0             0             0             0             0
+ LSES_C             0             0             0             0             0
+
+
+           LAMBDA
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+ BLK_C              0             0             0             0             0
+ LAT_C              0             0             0             0             0
+ LSES_C             0             0             0             0             0
+
+
+           LAMBDA
+              LAT_C         LSES_C
+              ________      ________
+ IS_SPED            0             0
+ BLK_C              0             0
+ LAT_C              0             0
+ LSES_C             0             0
+
+
+           THETA
+              IS_SPED       BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ IS_SPED            0
+ BLK_C              0             0
+ LAT_C              0             0             0
+ LSES_C             0             0             0             0
+
+
+           ALPHA
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+                    0             0             0             0             0
+
+
+           ALPHA
+              LAT_C         LSES_C
+              ________      ________
+                    0             0
+
+
+           BETA
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+ S1%B2              0             0             0             0             0
+ S2%B2              0             0             0             0             0
+ S3%B2              0             0             0             0             0
+ S4%B2              0             0             0             0             0
+ S17%B2             0             0             0             0             0
+ S18%B2             0             0             0             0             0
+ S19%B2             0             0             0             0             0
+ S20%B2             0             0             0             0             0
+ IS_SPED            0             0             0             0             0
+ BLK_C              0             0             0             0             0
+ LAT_C              0             0             0             0             0
+ LSES_C             0             0             0             0             0
+
+
+           BETA
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+ S1%B2              0             0             0             0            20
+ S2%B2              0             0             0             0            23
+ S3%B2              0             0             0             0            26
+ S4%B2              0             0             0             0            29
+ S17%B2             0             0             0             0            32
+ S18%B2             0             0             0             0            35
+ S19%B2             0             0             0             0            38
+ S20%B2             0             0             0             0            41
+ IS_SPED            0             0             0             0            44
+ BLK_C              0             0             0             0             0
+ LAT_C              0             0             0             0             0
+ LSES_C             0             0             0             0             0
+
+
+           BETA
+              LAT_C         LSES_C
+              ________      ________
+ S1%B2             21            22
+ S2%B2             24            25
+ S3%B2             27            28
+ S4%B2             30            31
+ S17%B2            33            34
+ S18%B2            36            37
+ S19%B2            39            40
+ S20%B2            42            43
+ IS_SPED           45            46
+ BLK_C              0             0
+ LAT_C              0             0
+ LSES_C             0             0
+
+
+           PSI
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+ S1%B2             47
+ S2%B2             48            49
+ S3%B2             50            51            52
+ S4%B2             53            54            55            56
+ S17%B2            57            58            59            60            61
+ S18%B2            62            63            64            65            66
+ S19%B2            68            69            70            71            72
+ S20%B2            75            76            77            78            79
+ IS_SPED           83            84            85            86            87
+ BLK_C              0             0             0             0             0
+ LAT_C              0             0             0             0             0
+ LSES_C             0             0             0             0             0
+
+
+           PSI
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+ S18%B2            67
+ S19%B2            73            74
+ S20%B2            80            81            82
+ IS_SPED           88            89            90            91
+ BLK_C              0             0             0             0             0
+ LAT_C              0             0             0             0             0
+ LSES_C             0             0             0             0             0
+
+
+           PSI
+              LAT_C         LSES_C
+              ________      ________
+ LAT_C              0
+ LSES_C             0             0
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN DISTRICT
+
+
+           TAU
+              IS_SPED$
+              ________
+                  109
+
+
+           NU
+              IS_SPED
+              ________
+                    0
+
+
+           LAMBDA
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+ IS_SPED            0             0             0             0             0
+
+
+           LAMBDA
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+ IS_SPED            0             0             0             0
+
+
+           THETA
+              IS_SPED
+              ________
+ IS_SPED            0
+
+
+           ALPHA
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+                   92            93            94            95            96
+
+
+           ALPHA
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+                   97            98            99             0
+
+
+           BETA
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+ S1%B3              0             0             0             0             0
+ S2%B3              0             0             0             0             0
+ S3%B3              0             0             0             0             0
+ S4%B3              0             0             0             0             0
+ S17%B3             0             0             0             0             0
+ S18%B3             0             0             0             0             0
+ S19%B3             0             0             0             0             0
+ S20%B3             0             0             0             0             0
+ IS_SPED            0             0             0             0             0
+
+
+           BETA
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+ S1%B3              0             0             0             0
+ S2%B3              0             0             0             0
+ S3%B3              0             0             0             0
+ S4%B3              0             0             0             0
+ S17%B3             0             0             0             0
+ S18%B3             0             0             0             0
+ S19%B3             0             0             0             0
+ S20%B3             0             0             0             0
+ IS_SPED            0             0             0             0
+
+
+           PSI
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+ S1%B3            100
+ S2%B3              0           101
+ S3%B3              0             0           102
+ S4%B3              0             0             0           103
+ S17%B3             0             0             0             0           104
+ S18%B3             0             0             0             0             0
+ S19%B3             0             0             0             0             0
+ S20%B3             0             0             0             0             0
+ IS_SPED            0             0             0             0             0
+
+
+           PSI
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+ S18%B3           105
+ S19%B3             0           106
+ S20%B3             0             0           107
+ IS_SPED            0             0             0           108
+
+
+     STARTING VALUES FOR WITHIN
+
+
+           TAU
+              IS_SPED$
+              ________
+                0.000
+
+
+           NU
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           NU
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           LAMBDA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED        1.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         1.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         1.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         1.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         1.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        1.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         1.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         1.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         1.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         1.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        1.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         1.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         1.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         1.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         1.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        1.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         1.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         1.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         1.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         1.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        1.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         1.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         1.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         1.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         1.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ IS_SPED        0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000
+ RS_WF1         1.000         0.000         0.000
+ RS_WM0         0.000         1.000         0.000
+ RS_WM1         0.000         0.000         1.000
+
+
+           THETA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000
+ RS_AAF0        0.000         0.000
+ RS_AAF1        0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ RS_AIF0        0.000
+ RS_AIF1        0.000         0.000
+ RS_AIM0        0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ RS_ASF1        0.000
+ RS_ASM0        0.000         0.000
+ RS_ASM1        0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ RS_HWM0        0.000
+ RS_HWM1        0.000         0.000
+ RS_HLF0        0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ RS_HLM1        0.000
+ RS_MRF0        0.000         0.000
+ RS_MRF1        0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           THETA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ RS_WF1         0.000
+ RS_WM0         0.000         0.000
+ RS_WM1         0.000         0.000         0.000
+
+
+           ALPHA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           BETA
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ IS_SPED        0.000         0.000         0.000
+ RS_AAF0        0.000         0.000         0.000
+ RS_AAF1        0.000         0.000         0.000
+ RS_AAM0        0.000         0.000         0.000
+ RS_AAM1        0.000         0.000         0.000
+ RS_AIF0        0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000
+
+
+           PSI
+              IS_SPED       RS_AAF0       RS_AAF1       RS_AAM0       RS_AAM1
+              ________      ________      ________      ________      ________
+ IS_SPED        1.000
+ RS_AAF0        0.000         0.039
+ RS_AAF1        0.000         0.000         0.030
+ RS_AAM0        0.000         0.000         0.000         0.041
+ RS_AAM1        0.000         0.000         0.000         0.000         0.031
+ RS_AIF0        0.000         0.000         0.000         0.000         0.000
+ RS_AIF1        0.000         0.000         0.000         0.000         0.000
+ RS_AIM0        0.000         0.000         0.000         0.000         0.000
+ RS_AIM1        0.000         0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.000
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              RS_AIF0       RS_AIF1       RS_AIM0       RS_AIM1       RS_ASF0
+              ________      ________      ________      ________      ________
+ RS_AIF0        0.001
+ RS_AIF1        0.000         0.000
+ RS_AIM0        0.000         0.000         0.001
+ RS_AIM1        0.000         0.000         0.000         0.000
+ RS_ASF0        0.000         0.000         0.000         0.000         0.010
+ RS_ASF1        0.000         0.000         0.000         0.000         0.000
+ RS_ASM0        0.000         0.000         0.000         0.000         0.000
+ RS_ASM1        0.000         0.000         0.000         0.000         0.000
+ RS_HWF0        0.000         0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              RS_ASF1       RS_ASM0       RS_ASM1       RS_HWF0       RS_HWF1
+              ________      ________      ________      ________      ________
+ RS_ASF1        0.001
+ RS_ASM0        0.000         0.011
+ RS_ASM1        0.000         0.000         0.001
+ RS_HWF0        0.000         0.000         0.000         0.000
+ RS_HWF1        0.000         0.000         0.000         0.000         0.000
+ RS_HWM0        0.000         0.000         0.000         0.000         0.000
+ RS_HWM1        0.000         0.000         0.000         0.000         0.000
+ RS_HLF0        0.000         0.000         0.000         0.000         0.000
+ RS_HLF1        0.000         0.000         0.000         0.000         0.000
+ RS_HLM0        0.000         0.000         0.000         0.000         0.000
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              RS_HWM0       RS_HWM1       RS_HLF0       RS_HLF1       RS_HLM0
+              ________      ________      ________      ________      ________
+ RS_HWM0        0.000
+ RS_HWM1        0.000         0.000
+ RS_HLF0        0.000         0.000         0.032
+ RS_HLF1        0.000         0.000         0.000         0.014
+ RS_HLM0        0.000         0.000         0.000         0.000         0.033
+ RS_HLM1        0.000         0.000         0.000         0.000         0.000
+ RS_MRF0        0.000         0.000         0.000         0.000         0.000
+ RS_MRF1        0.000         0.000         0.000         0.000         0.000
+ RS_MRM0        0.000         0.000         0.000         0.000         0.000
+ RS_MRM1        0.000         0.000         0.000         0.000         0.000
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              RS_HLM1       RS_MRF0       RS_MRF1       RS_MRM0       RS_MRM1
+              ________      ________      ________      ________      ________
+ RS_HLM1        0.014
+ RS_MRF0        0.000         0.009
+ RS_MRF1        0.000         0.000         0.005
+ RS_MRM0        0.000         0.000         0.000         0.009
+ RS_MRM1        0.000         0.000         0.000         0.000         0.005
+ RS_WF1         0.000         0.000         0.000         0.000         0.000
+ RS_WM0         0.000         0.000         0.000         0.000         0.000
+ RS_WM1         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              RS_WF1        RS_WM0        RS_WM1
+              ________      ________      ________
+ RS_WF1         0.015
+ RS_WM0         0.000         0.071
+ RS_WM1         0.000         0.000         0.016
+
+
+     STARTING VALUES FOR BETWEEN SCHL
+
+
+           TAU
+              IS_SPED$
+              ________
+                0.000
+
+
+           NU
+              IS_SPED       BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ BLK_C          0.000         0.000         0.000         0.000         0.000
+ LAT_C          0.000         0.000         0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         1.000         0.000
+ BLK_C          0.000         0.000         0.000         0.000         1.000
+ LAT_C          0.000         0.000         0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              LAT_C         LSES_C
+              ________      ________
+ IS_SPED        0.000         0.000
+ BLK_C          0.000         0.000
+ LAT_C          1.000         0.000
+ LSES_C         0.000         1.000
+
+
+           THETA
+              IS_SPED       BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ IS_SPED        0.000
+ BLK_C          0.000         0.000
+ LAT_C          0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              LAT_C         LSES_C
+              ________      ________
+                0.000         0.000
+
+
+           BETA
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+ S1%B2          0.000         0.000         0.000         0.000         0.000
+ S2%B2          0.000         0.000         0.000         0.000         0.000
+ S3%B2          0.000         0.000         0.000         0.000         0.000
+ S4%B2          0.000         0.000         0.000         0.000         0.000
+ S17%B2         0.000         0.000         0.000         0.000         0.000
+ S18%B2         0.000         0.000         0.000         0.000         0.000
+ S19%B2         0.000         0.000         0.000         0.000         0.000
+ S20%B2         0.000         0.000         0.000         0.000         0.000
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ BLK_C          0.000         0.000         0.000         0.000         0.000
+ LAT_C          0.000         0.000         0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+ S1%B2          0.000         0.000         0.000         0.000         0.000
+ S2%B2          0.000         0.000         0.000         0.000         0.000
+ S3%B2          0.000         0.000         0.000         0.000         0.000
+ S4%B2          0.000         0.000         0.000         0.000         0.000
+ S17%B2         0.000         0.000         0.000         0.000         0.000
+ S18%B2         0.000         0.000         0.000         0.000         0.000
+ S19%B2         0.000         0.000         0.000         0.000         0.000
+ S20%B2         0.000         0.000         0.000         0.000         0.000
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ BLK_C          0.000         0.000         0.000         0.000         0.000
+ LAT_C          0.000         0.000         0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              LAT_C         LSES_C
+              ________      ________
+ S1%B2          0.000         0.000
+ S2%B2          0.000         0.000
+ S3%B2          0.000         0.000
+ S4%B2          0.000         0.000
+ S17%B2         0.000         0.000
+ S18%B2         0.000         0.000
+ S19%B2         0.000         0.000
+ S20%B2         0.000         0.000
+ IS_SPED        0.000         0.000
+ BLK_C          0.000         0.000
+ LAT_C          0.000         0.000
+ LSES_C         0.000         0.000
+
+
+           PSI
+              S1%B2         S2%B2         S3%B2         S4%B2         S17%B2
+              ________      ________      ________      ________      ________
+ S1%B2          1.000
+ S2%B2          0.000         1.000
+ S3%B2          0.000         0.000         1.000
+ S4%B2          0.000         0.000         0.000         1.000
+ S17%B2         0.000         0.000         0.000         0.000         1.000
+ S18%B2         0.000         0.000         0.000         0.000         0.000
+ S19%B2         0.000         0.000         0.000         0.000         0.000
+ S20%B2         0.000         0.000         0.000         0.000         0.000
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+ BLK_C          0.000         0.000         0.000         0.000         0.000
+ LAT_C          0.000         0.000         0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              S18%B2        S19%B2        S20%B2        IS_SPED       BLK_C
+              ________      ________      ________      ________      ________
+ S18%B2         1.000
+ S19%B2         0.000         1.000
+ S20%B2         0.000         0.000         1.000
+ IS_SPED        0.000         0.000         0.000         1.000
+ BLK_C          0.000         0.000         0.000         0.000       161.674
+ LAT_C          0.000         0.000         0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              LAT_C         LSES_C
+              ________      ________
+ LAT_C        110.614
+ LSES_C         0.000        91.283
+
+
+     STARTING VALUES FOR BETWEEN DISTRICT
+
+
+           TAU
+              IS_SPED$
+              ________
+                0.876
+
+
+           NU
+              IS_SPED
+              ________
+                0.000
+
+
+           LAMBDA
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+ IS_SPED        0.000         0.000         0.000         1.000
+
+
+           THETA
+              IS_SPED
+              ________
+ IS_SPED        0.000
+
+
+           ALPHA
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+                0.000         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           BETA
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+ S1%B3          0.000         0.000         0.000         0.000         0.000
+ S2%B3          0.000         0.000         0.000         0.000         0.000
+ S3%B3          0.000         0.000         0.000         0.000         0.000
+ S4%B3          0.000         0.000         0.000         0.000         0.000
+ S17%B3         0.000         0.000         0.000         0.000         0.000
+ S18%B3         0.000         0.000         0.000         0.000         0.000
+ S19%B3         0.000         0.000         0.000         0.000         0.000
+ S20%B3         0.000         0.000         0.000         0.000         0.000
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+
+
+           BETA
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+ S1%B3          0.000         0.000         0.000         0.000
+ S2%B3          0.000         0.000         0.000         0.000
+ S3%B3          0.000         0.000         0.000         0.000
+ S4%B3          0.000         0.000         0.000         0.000
+ S17%B3         0.000         0.000         0.000         0.000
+ S18%B3         0.000         0.000         0.000         0.000
+ S19%B3         0.000         0.000         0.000         0.000
+ S20%B3         0.000         0.000         0.000         0.000
+ IS_SPED        0.000         0.000         0.000         0.000
+
+
+           PSI
+              S1%B3         S2%B3         S3%B3         S4%B3         S17%B3
+              ________      ________      ________      ________      ________
+ S1%B3          1.000
+ S2%B3          0.000         1.000
+ S3%B3          0.000         0.000         1.000
+ S4%B3          0.000         0.000         0.000         1.000
+ S17%B3         0.000         0.000         0.000         0.000         1.000
+ S18%B3         0.000         0.000         0.000         0.000         0.000
+ S19%B3         0.000         0.000         0.000         0.000         0.000
+ S20%B3         0.000         0.000         0.000         0.000         0.000
+ IS_SPED        0.000         0.000         0.000         0.000         0.000
+
+
+           PSI
+              S18%B3        S19%B3        S20%B3        IS_SPED
+              ________      ________      ________      ________
+ S18%B3         1.000
+ S19%B3         0.000         1.000
+ S20%B3         0.000         0.000         1.000
+ IS_SPED        0.000         0.000         0.000         1.000
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 2~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 3~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 4~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 5~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 6~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 7~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 8~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 9~N(0.000,5.000)              0.0000              5.0000              2.2361
+     Parameter 10~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 11~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 12~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 13~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 14~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 15~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 16~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 17~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 18~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 19~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 20~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 21~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 22~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 23~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 24~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 25~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 26~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 27~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 28~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 29~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 30~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 31~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 32~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 33~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 34~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 35~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 36~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 37~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 38~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 39~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 40~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 41~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 42~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 43~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 44~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 45~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 46~N(0.000,5.000)             0.0000              5.0000              2.2361
+     Parameter 47~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 48~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 49~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 50~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 51~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 52~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 53~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 54~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 55~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 56~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 57~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 58~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 59~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 60~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 61~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 62~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 63~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 64~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 65~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 66~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 67~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 68~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 69~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 70~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 71~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 72~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 73~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 74~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 75~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 76~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 77~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 78~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 79~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 80~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 81~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 82~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 83~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 84~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 85~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 86~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 87~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 88~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 89~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 90~IW(0.000,10)             infinity            infinity            infinity
+     Parameter 91~IW(1.000,10)             infinity            infinity            infinity
+     Parameter 92~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 93~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 94~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 95~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 96~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 97~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 98~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 99~N(0.000,infinity)          0.0000            infinity            infinity
+     Parameter 100~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 101~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 102~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 103~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 104~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 105~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 106~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 107~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 108~IG(-1.000,0.000)        infinity            infinity            infinity
+     Parameter 109~N(0.000,5.000)            0.0000              5.0000              2.2361
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     CHAIN    BSEED
+     1        0
+     2        285380
+     3        253358
+     4        93468
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              1.333               94
+     200              1.297               96
+     300              1.213               96
+     400              1.262               96
+     500              1.142               96
+     600              1.153               89
+     700              1.095               89
+     800              1.085               89
+     900              1.085               105
+     1000             1.071               95
+     1100             1.059               62
+     1200             1.062               94
+     1300             1.048               94
+     1400             1.057               94
+     1500             1.056               94
+     1600             1.043               96
+     1700             1.025               66
+     1800             1.027               86
+     1900             1.029               86
+     2000             1.028               86
+     2100             1.029               86
+     2200             1.022               86
+     2300             1.025               105
+     2400             1.019               99
+     2500             1.020               99
+     2600             1.023               99
+     2700             1.021               99
+     2800             1.022               99
+     2900             1.017               99
+     3000             1.018               90
+     3100             1.016               90
+     3200             1.014               90
+     3300             1.011               98
+     3400             1.017               104
+     3500             1.017               104
+     3600             1.015               104
+     3700             1.013               104
+     3800             1.014               104
+     3900             1.010               98
+     4000             1.009               79
+     4100             1.007               61
+     4200             1.007               49
+     4300             1.007               49
+     4400             1.007               76
+     4500             1.010               88
+     4600             1.012               88
+     4700             1.013               88
+     4800             1.014               88
+     4900             1.013               88
+     5000             1.013               88
+     5100             1.010               88
+     5200             1.008               88
+     5300             1.007               88
+     5400             1.007               88
+     5500             1.007               88
+     5600             1.008               88
+     5700             1.007               88
+     5800             1.007               88
+     5900             1.008               96
+     6000             1.010               96
+     6100             1.010               96
+     6200             1.012               96
+     6300             1.010               96
+     6400             1.014               96
+     6500             1.015               96
+     6600             1.015               96
+     6700             1.015               96
+     6800             1.015               96
+     6900             1.016               96
+     7000             1.011               96
+     7100             1.008               96
+     7200             1.007               62
+     7300             1.006               66
+     7400             1.005               96
+     7500             1.006               96
+     7600             1.006               96
+     7700             1.006               96
+     7800             1.005               83
+     7900             1.006               96
+     8000             1.006               83
+     8100             1.007               83
+     8200             1.006               83
+     8300             1.006               83
+     8400             1.005               66
+     8500             1.005               66
+     8600             1.005               99
+     8700             1.005               99
+     8800             1.006               93
+     8900             1.005               93
+     9000             1.005               98
+     9100             1.005               93
+     9200             1.005               93
+     9300             1.005               93
+     9400             1.006               93
+     9500             1.006               93
+     9600             1.006               93
+     9700             1.007               93
+     9800             1.008               93
+     9900             1.009               93
+     10000            1.008               93
+     10100            1.007               93
+     10200            1.007               93
+     10300            1.008               93
+     10400            1.007               93
+     10500            1.007               93
+     10600            1.007               93
+     10700            1.008               108
+     10800            1.007               108
+     10900            1.008               93
+     11000            1.010               93
+     11100            1.009               93
+     11200            1.009               93
+     11300            1.008               93
+     11400            1.007               93
+     11500            1.008               93
+     11600            1.008               93
+     11700            1.008               93
+     11800            1.007               93
+     11900            1.007               93
+     12000            1.007               93
+     12100            1.007               93
+     12200            1.007               93
+     12300            1.006               93
+     12400            1.006               93
+     12500            1.007               93
+     12600            1.007               93
+     12700            1.006               93
+     12800            1.006               93
+     12900            1.005               93
+     13000            1.006               93
+     13100            1.006               93
+     13200            1.006               93
+     13300            1.006               93
+     13400            1.005               93
+     13500            1.005               93
+     13600            1.005               93
+     13700            1.006               93
+     13800            1.006               93
+     13900            1.005               93
+     14000            1.005               93
+     14100            1.005               93
+     14200            1.005               93
+     14300            1.004               93
+     14400            1.004               93
+     14500            1.004               93
+     14600            1.004               93
+     14700            1.004               93
+     14800            1.003               93
+     14900            1.003               93
+     15000            1.004               99
+     15100            1.004               93
+     15200            1.004               93
+     15300            1.004               93
+     15400            1.004               99
+     15500            1.004               99
+     15600            1.005               99
+     15700            1.004               99
+     15800            1.004               99
+     15900            1.004               99
+     16000            1.003               93
+     16100            1.004               93
+     16200            1.004               93
+     16300            1.004               93
+     16400            1.004               93
+     16500            1.004               93
+     16600            1.004               93
+     16700            1.004               93
+     16800            1.004               93
+     16900            1.005               93
+     17000            1.005               93
+     17100            1.005               93
+     17200            1.005               93
+     17300            1.004               93
+     17400            1.004               93
+     17500            1.004               96
+     17600            1.004               96
+     17700            1.004               96
+     17800            1.004               96
+     17900            1.004               96
+     18000            1.004               96
+     18100            1.004               96
+     18200            1.004               96
+     18300            1.004               96
+     18400            1.004               96
+     18500            1.003               96
+     18600            1.003               92
+     18700            1.003               92
+     18800            1.002               92
+     18900            1.002               93
+     19000            1.002               93
+     19100            1.002               96
+     19200            1.002               93
+     19300            1.002               93
+     19400            1.002               92
+     19500            1.002               92
+     19600            1.003               92
+     19700            1.002               92
+     19800            1.003               92
+     19900            1.003               92
+     20000            1.003               92
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Sample proportions
+  Bayesian posterior parameter distributions
+  Bayesian posterior parameter trace plots
+  Bayesian autocorrelation plots
+  Bayesian prior parameter distributions
+
+DIAGRAM INFORMATION
+
+  Mplus diagrams are currently not available for multilevel analysis.
+  No diagram output was produced.
+
+
+     Beginning Time:  10:10:02
+        Ending Time:  13:13:26
+       Elapsed Time:  03:03:24
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen
