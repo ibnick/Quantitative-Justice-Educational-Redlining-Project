@@ -1,0 +1,573 @@
+Mplus VERSION 8.11
+MUTHEN & MUTHEN
+11/18/2026  11:25 PM
+
+INPUT INSTRUCTIONS
+
+  TITLE:  Set 3 Model 2- students nested in Districts; pct_sped on
+          level-1 school%low ses black + % lowses latine
+          (centered); ref = white;
+          random intercept + random slopes across districts.
+
+  DATA:
+    FILE IS "S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt";
+
+  VARIABLE: NAMES ARE Schl is_sped reg_num regses_num District
+            lsblk_c lslat_c lswht_c
+            sped_c lep_c r_seg p_sped;
+            USEVARIABLES ARE
+            lsblk_c lslat_c p_sped;
+
+           !pct_white_c is removed from the USEVARIABLES as a reference
+
+
+      CLUSTER IS District;
+      MISSING ARE ALL (-999); !tells MPLUS the empty cells are all NAs
+      WITHIN = lsblk_c lslat_c;
+
+
+    ANALYSIS:
+      TYPE = TWOLEVEL RANDOM;
+      ESTIMATOR = BAYES;
+      PROCESSORS = 4;
+      CHAINS = 4
+      BITERATIONS = 100000(20000);
+      BCONVERGENCE = 0.05;
+
+  MODEL:
+      %WITHIN%
+
+  ! School composition (level 1) predicts random intercept
+      p_sped ON lsblk_c lslat_c;
+
+
+      %BETWEEN%
+      ! District random intercept only
+      p_sped;
+
+
+
+    OUTPUT:
+      TECH1 TECH8 STANDARDIZED;
+      PLOT:
+      TYPE = PLOT2;
+
+
+
+
+
+
+*** WARNING in MODEL command
+  TYPE=RANDOM is used to declare random effect variables in the model.
+  No random effect variables were found.  TYPE=RANDOM will be ignored.
+*** WARNING
+  One or more individual-level variables have no variation within a
+  cluster for the following clusters.
+
+     Variable   Cluster IDs with no within-cluster variation
+
+      LSBLK_C     71 9611 92 9612 74 9607 85 9614 72 9604 82 76 9606 87 80 9605 77 39 40 88 69
+                  86 89
+      LSLAT_C     71 9611 92 9612 74 9607 85 9614 72 9604 82 76 9606 87 80 9605 77 39 40 88 69
+                  86 89
+
+*** WARNING
+  Data set contains cases with missing on all variables except
+  x-variables.  These cases were not included in the analysis.
+  Number of cases with missing on all variables except x-variables:  2209
+   3 WARNING(S) FOUND IN THE INPUT INSTRUCTIONS
+
+
+
+Set 3 Model 2- students nested in Districts; pct_sped on
+level-1 school%low ses black + % lowses latine
+(centered); ref = white;
+random intercept + random slopes across districts.
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                      137392
+
+Number of dependent variables                                    1
+Number of independent variables                                  2
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Continuous
+   P_SPED
+
+Observed independent variables
+   LSBLK_C     LSLAT_C
+
+Variables with special functions
+
+  Cluster variable      DISTRICT
+
+  Within variables
+   LSBLK_C     LSLAT_C
+
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               4
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                               50000
+  K-th iteration used for thinning                               1
+
+Input data file(s)
+  S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of clusters                         40
+
+       Size (s)    Cluster ID with Size s
+
+        117        71
+        144        9611
+        190        92
+        395        9612
+        402        74
+        407        9607
+        411        85
+        437        9614
+        446        72
+        530        9604
+        586        82
+        598        76
+        642        9606
+        739        87
+        761        80
+        805        9605
+       1156        77
+       1220        39
+       1321        40
+       1392        88
+       1438        37
+       1441        69
+       2181        86
+       2450        16
+       2455        35
+       3045        89
+       3299        23
+       3580        15
+       4496        18
+       4778        38
+       5866        24
+       6132        13
+       6198        17
+       8008        10
+       8489        34
+       9937        31
+      10454        36
+      12075        33
+      12657        29
+      15714        32
+
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns             1
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED         1.000
+ LSBLK_C        1.000         1.000
+ LSLAT_C        1.000         1.000         1.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     P_SPED                1.235       3.028       1.000   84.53%       1.000      1.000      1.000
+          137392.000       0.395       9.032       4.000    2.71%       1.000      1.000
+     LSBLK_C              -2.458       1.134     -33.106    0.00%     -18.633     -7.586     -4.087
+          137392.000     323.269       1.816      63.566    0.44%      -0.247      9.539
+     LSLAT_C               0.637       1.818     -18.064    0.44%     -10.611     -7.000     -4.036
+          137392.000     223.167       3.730      66.404    0.59%      -0.345      7.904
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                               5
+
+Bayesian Posterior Predictive Checking using Chi-Square
+
+          95% Confidence Interval for the Difference Between
+          the Observed and the Replicated Chi-Square Values
+
+                                 -7.127            10.768
+
+          Posterior Predictive P-Value              0.417
+
+Information Criteria
+
+          Deviance (DIC)                       259823.611
+          Estimated Number of Parameters (pD)      35.066
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+ P_SPED     ON
+    LSBLK_C            0.005       0.000      0.000       0.005       0.005      *
+    LSLAT_C            0.000       0.000      0.070       0.000       0.001
+
+ Residual Variances
+    P_SPED             0.388       0.002      0.000       0.385       0.391      *
+
+Between Level
+
+ Means
+    P_SPED             1.189       0.027      0.000       1.126       1.233      *
+
+ Variances
+    P_SPED             0.027       0.007      0.000       0.016       0.045      *
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+ P_SPED     ON
+    LSBLK_C            0.141       0.005      0.000       0.130       0.150      *
+    LSLAT_C            0.006       0.004      0.070      -0.002       0.014
+
+ Residual Variances
+    P_SPED             0.980       0.001      0.000       0.978       0.983      *
+
+Between Level
+
+ Means
+    P_SPED             7.287       0.978      0.000       5.370       9.295      *
+
+ Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+
+STDY Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+ P_SPED     ON
+    LSBLK_C            0.008       0.000      0.000       0.007       0.008      *
+    LSLAT_C            0.000       0.000      0.070       0.000       0.001
+
+ Residual Variances
+    P_SPED             0.980       0.001      0.000       0.978       0.983      *
+
+Between Level
+
+ Means
+    P_SPED             7.287       0.978      0.000       5.370       9.295      *
+
+ Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+
+STD Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+ P_SPED     ON
+    LSBLK_C            0.005       0.000      0.000       0.005       0.005      *
+    LSLAT_C            0.000       0.000      0.070       0.000       0.001
+
+ Residual Variances
+    P_SPED             0.388       0.002      0.000       0.385       0.391      *
+
+Between Level
+
+ Means
+    P_SPED             1.189       0.027      0.000       1.126       1.233      *
+
+ Variances
+    P_SPED             0.027       0.007      0.000       0.016       0.045      *
+
+
+R-SQUARE
+
+Within Level
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    P_SPED             0.020       0.001      0.000       0.016       0.022
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+           NU
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+                    0             0             0
+
+
+           LAMBDA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED             0             0             0
+ LSBLK_C            0             0             0
+ LSLAT_C            0             0             0
+
+
+           THETA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED             0
+ LSBLK_C            0             0
+ LSLAT_C            0             0             0
+
+
+           ALPHA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+                    0             0             0
+
+
+           BETA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED             0             1             2
+ LSBLK_C            0             0             0
+ LSLAT_C            0             0             0
+
+
+           PSI
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED             3
+ LSBLK_C            0             0
+ LSLAT_C            0             0             0
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN
+
+
+           NU
+              P_SPED
+              ________
+                    0
+
+
+           LAMBDA
+              P_SPED
+              ________
+ P_SPED             0
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED             0
+
+
+           ALPHA
+              P_SPED
+              ________
+                    4
+
+
+           BETA
+              P_SPED
+              ________
+ P_SPED             0
+
+
+           PSI
+              P_SPED
+              ________
+ P_SPED             5
+
+
+     STARTING VALUES FOR WITHIN
+
+
+           NU
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           LAMBDA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED         1.000         0.000         0.000
+ LSBLK_C        0.000         1.000         0.000
+ LSLAT_C        0.000         0.000         1.000
+
+
+           THETA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED         0.000
+ LSBLK_C        0.000         0.000
+ LSLAT_C        0.000         0.000         0.000
+
+
+           ALPHA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+                0.000         0.000         0.000
+
+
+           BETA
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED         0.000         0.000         0.000
+ LSBLK_C        0.000         0.000         0.000
+ LSLAT_C        0.000         0.000         0.000
+
+
+           PSI
+              P_SPED        LSBLK_C       LSLAT_C
+              ________      ________      ________
+ P_SPED         0.197
+ LSBLK_C        0.000       161.635
+ LSLAT_C        0.000         0.000       111.583
+
+
+     STARTING VALUES FOR BETWEEN
+
+
+           NU
+              P_SPED
+              ________
+                0.000
+
+
+           LAMBDA
+              P_SPED
+              ________
+ P_SPED         1.000
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED         0.000
+
+
+           ALPHA
+              P_SPED
+              ________
+                1.235
+
+
+           BETA
+              P_SPED
+              ________
+ P_SPED         0.000
+
+
+           PSI
+              P_SPED
+              ________
+ P_SPED         0.197
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 2~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 3~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 4~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 5~IG(-1.000,0.000)          infinity            infinity            infinity
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     CHAIN    BSEED
+     1        0
+     2        285380
+     3        253358
+     4        93468
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              1.000               1
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Bayesian posterior parameter distributions
+  Bayesian posterior parameter trace plots
+  Bayesian autocorrelation plots
+  Bayesian posterior predictive checking scatterplots
+  Bayesian posterior predictive checking distribution plots
+
+DIAGRAM INFORMATION
+
+  Mplus diagrams are currently not available for multilevel analysis.
+  No diagram output was produced.
+
+
+     Beginning Time:  23:25:23
+        Ending Time:  23:25:40
+       Elapsed Time:  00:00:17
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen
