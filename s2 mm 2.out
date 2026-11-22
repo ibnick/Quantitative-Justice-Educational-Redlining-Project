@@ -1,0 +1,742 @@
+Mplus VERSION 8.11
+MUTHEN & MUTHEN
+11/22/2026   1:29 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:  Set 2 Model 2- students nested in Districts; pct_sped on
+          level-1 school%low ses + % black + % latine (centered; ref = white;
+          random intercept across districts.
+
+  DATA:
+    FILE IS "S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt";
+
+  VARIABLE: NAMES ARE Schl is_sped reg_num regses_num	District
+     blk_c lat_c wht_c sped_c lses_c lep_c r_seg oss_c gen_c
+     z2_c z3_c z2z3_c sehd_c dip_c p_sped lsblk_c lslat_c lswht_c;
+            USEVARIABLES ARE
+            blk_c lat_c lses_c p_sped;
+
+           !pct_white_c is removed from the USEVARIABLES as a reference
+
+
+      CLUSTER = District Schl;
+      BETWEEN = p_sped (Schl) blk_c lat_c lses_c;
+      USEOBSERVATIONS = p_sped LT 100;
+      MISSING ARE ALL (-999); !tells MPLUS the empty cells are all NAs
+
+
+    ANALYSIS:
+      TYPE = THREELEVEL;
+      ESTIMATOR = BAYES;
+      PROCESSORS = 4;
+      CHAINS = 4;
+      BITERATIONS = 100000(20000);
+      BCONVERGENCE = 0.05;
+
+  MODEL:
+      %WITHIN%
+      !No within variables (Fixed Effects)
+
+      %BETWEEN Schl%
+      p_sped ON blk_c lat_c lses_c;
+
+      %BETWEEN District%
+      ! District random intercept
+      p_sped;
+
+
+  OUTPUT:
+      TECH1 TECH8 STANDARDIZED;
+      PLOT:
+      TYPE = PLOT2;
+
+
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Set 2 Model 2- students nested in Districts; pct_sped on
+level-1 school%low ses + % black + % latine (centered; ref = white;
+random intercept across districts.
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                      137608
+
+Number of dependent variables                                    1
+Number of independent variables                                  3
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Continuous
+   P_SPED
+
+Observed independent variables
+   BLK_C       LAT_C       LSES_C
+
+Variables with special functions
+
+  Cluster variables     DISTRICT  SCHL
+
+  Level 2 between variables
+   BLK_C       LAT_C       LSES_C
+
+  Level 2 and level 3 between variables
+   P_SPED
+
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               4
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                              100000
+  K-th iteration used for thinning                               1
+
+Input data file(s)
+  S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of SCHL clusters                   207
+     Number of DISTRICT clusters                40
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns             1
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED         1.000
+ BLK_C          1.000         1.000
+ LAT_C          1.000         1.000         1.000
+ LSES_C         1.000         1.000         1.000         1.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     P_SPED               16.913       4.846       1.030    0.48%      11.092     13.826     15.127
+             207.000     121.909      30.591      99.167    0.48%      16.159     20.000
+     BLK_C                -0.297       1.057     -31.674    0.48%     -17.335     -6.811     -3.323
+             207.000     387.151       1.045      63.566    0.48%       0.302     12.988
+     LAT_C                 0.367       1.729     -18.064    0.48%     -10.748     -6.802     -4.150
+             207.000     202.136       3.622      66.404    0.48%      -0.141      7.904
+     LSES_C               -0.343       0.498     -29.306    0.48%     -13.942     -3.911     -0.297
+             207.000     221.188       0.135      45.385    0.48%       2.012     11.063
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                               6
+
+Bayesian Posterior Predictive Checking using Chi-Square
+
+          95% Confidence Interval for the Difference Between
+          the Observed and the Replicated Chi-Square Values
+
+                                -10.266            11.582
+
+          Posterior Predictive P-Value              0.469
+
+Information Criteria
+
+          Deviance (DIC)                         1579.405
+          Estimated Number of Parameters (pD)      13.441
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+Between SCHL Level
+
+ P_SPED     ON
+    BLK_C              0.025       0.074      0.365      -0.119       0.172
+    LAT_C             -0.034       0.073      0.318      -0.179       0.107
+    LSES_C             0.150       0.097      0.062      -0.040       0.341
+
+ Residual Variances
+    P_SPED           113.912      11.989      0.000      93.536     140.539      *
+
+Between DISTRICT Level
+
+ Means
+    P_SPED            16.390       1.060      0.000      14.221      18.391      *
+
+ Variances
+    P_SPED             8.280       8.477      0.000       0.584      32.386      *
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+Between SCHL Level
+
+ P_SPED     ON
+    BLK_C              0.045       0.131      0.365      -0.211       0.301
+    LAT_C             -0.043       0.093      0.318      -0.226       0.137
+    LSES_C             0.202       0.128      0.062      -0.053       0.448
+
+ Residual Variances
+    P_SPED             0.934       0.034      0.000       0.853       0.984      *
+
+Between DISTRICT Level
+
+ Intercepts
+    P_SPED             5.680       6.601      0.000       2.766      22.275      *
+
+ Residual Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+
+STDY Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+Between SCHL Level
+
+ P_SPED     ON
+    BLK_C              0.002       0.007      0.365      -0.011       0.015
+    LAT_C             -0.003       0.007      0.318      -0.016       0.010
+    LSES_C             0.014       0.009      0.062      -0.004       0.030
+
+ Residual Variances
+    P_SPED             0.934       0.034      0.000       0.853       0.984      *
+
+Between DISTRICT Level
+
+ Intercepts
+    P_SPED             5.680       6.601      0.000       2.766      22.275      *
+
+ Residual Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+
+STD Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+Between SCHL Level
+
+ P_SPED     ON
+    BLK_C              0.025       0.074      0.365      -0.119       0.172
+    LAT_C             -0.034       0.073      0.318      -0.179       0.107
+    LSES_C             0.150       0.097      0.062      -0.040       0.341
+
+ Residual Variances
+    P_SPED           113.912      11.989      0.000      93.536     140.539      *
+
+Between DISTRICT Level
+
+ Intercepts
+    P_SPED            16.390       1.060      0.000      14.221      18.391      *
+
+ Residual Variances
+    P_SPED             8.280       8.477      0.000       0.584      32.386      *
+
+
+R-SQUARE
+
+Between SCHL Level
+
+                                Posterior  One-Tailed         95% C.I.
+    Variable        Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%
+
+    P_SPED             0.066       0.034      0.000       0.016       0.147
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN SCHL
+
+
+           NU
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+                    0             0             0             0
+
+
+           LAMBDA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED             0             0             0             0
+ BLK_C              0             0             0             0
+ LAT_C              0             0             0             0
+ LSES_C             0             0             0             0
+
+
+           THETA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED             0
+ BLK_C              0             0
+ LAT_C              0             0             0
+ LSES_C             0             0             0             0
+
+
+           ALPHA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+                    0             0             0             0
+
+
+           BETA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED             0             1             2             3
+ BLK_C              0             0             0             0
+ LAT_C              0             0             0             0
+ LSES_C             0             0             0             0
+
+
+           PSI
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED             4
+ BLK_C              0             0
+ LAT_C              0             0             0
+ LSES_C             0             0             0             0
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN DISTRICT
+
+
+           NU
+              P_SPED
+              ________
+                    0
+
+
+           LAMBDA
+              P_SPED
+              ________
+ P_SPED             0
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED             0
+
+
+           ALPHA
+              P_SPED
+              ________
+                    5
+
+
+           BETA
+              P_SPED
+              ________
+ P_SPED             0
+
+
+           PSI
+              P_SPED
+              ________
+ P_SPED             6
+
+
+     STARTING VALUES FOR WITHIN
+
+
+     STARTING VALUES FOR BETWEEN SCHL
+
+
+           NU
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           LAMBDA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED         1.000         0.000         0.000         0.000
+ BLK_C          0.000         1.000         0.000         0.000
+ LAT_C          0.000         0.000         1.000         0.000
+ LSES_C         0.000         0.000         0.000         1.000
+
+
+           THETA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED         0.000
+ BLK_C          0.000         0.000
+ LAT_C          0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000
+
+
+           ALPHA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+                0.000         0.000         0.000         0.000
+
+
+           BETA
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED         0.000         0.000         0.000         0.000
+ BLK_C          0.000         0.000         0.000         0.000
+ LAT_C          0.000         0.000         0.000         0.000
+ LSES_C         0.000         0.000         0.000         0.000
+
+
+           PSI
+              P_SPED        BLK_C         LAT_C         LSES_C
+              ________      ________      ________      ________
+ P_SPED        21.849
+ BLK_C          0.000       161.957
+ LAT_C          0.000         0.000       111.564
+ LSES_C         0.000         0.000         0.000        91.943
+
+
+     STARTING VALUES FOR BETWEEN DISTRICT
+
+
+           NU
+              P_SPED
+              ________
+                0.000
+
+
+           LAMBDA
+              P_SPED
+              ________
+ P_SPED         1.000
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED         0.000
+
+
+           ALPHA
+              P_SPED
+              ________
+               15.602
+
+
+           BETA
+              P_SPED
+              ________
+ P_SPED         0.000
+
+
+           PSI
+              P_SPED
+              ________
+ P_SPED        21.849
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 2~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 3~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 4~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 5~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 6~IG(-1.000,0.000)          infinity            infinity            infinity
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     CHAIN    BSEED
+     1        0
+     2        285380
+     3        253358
+     4        93468
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              1.310               6
+     200              1.049               6
+     300              1.080               6
+     400              1.094               6
+     500              1.086               6
+     600              1.047               6
+     700              1.047               6
+     800              1.083               6
+     900              1.024               6
+     1000             1.008               6
+     1100             1.006               5
+     1200             1.005               5
+     1300             1.007               5
+     1400             1.007               5
+     1500             1.023               6
+     1600             1.026               6
+     1700             1.013               5
+     1800             1.022               5
+     1900             1.017               5
+     2000             1.018               5
+     2100             1.018               5
+     2200             1.022               5
+     2300             1.021               5
+     2400             1.028               5
+     2500             1.022               5
+     2600             1.019               5
+     2700             1.018               5
+     2800             1.015               5
+     2900             1.013               5
+     3000             1.010               5
+     3100             1.007               5
+     3200             1.005               5
+     3300             1.007               5
+     3400             1.008               6
+     3500             1.009               6
+     3600             1.009               6
+     3700             1.014               6
+     3800             1.014               6
+     3900             1.014               6
+     4000             1.014               6
+     4100             1.010               6
+     4200             1.007               6
+     4300             1.006               6
+     4400             1.004               6
+     4500             1.003               6
+     4600             1.002               6
+     4700             1.001               6
+     4800             1.001               5
+     4900             1.002               5
+     5000             1.001               6
+     5100             1.002               6
+     5200             1.002               6
+     5300             1.002               5
+     5400             1.001               5
+     5500             1.001               6
+     5600             1.001               5
+     5700             1.002               5
+     5800             1.003               5
+     5900             1.003               5
+     6000             1.003               5
+     6100             1.003               5
+     6200             1.003               6
+     6300             1.003               6
+     6400             1.003               6
+     6500             1.003               6
+     6600             1.002               6
+     6700             1.002               6
+     6800             1.003               6
+     6900             1.002               6
+     7000             1.002               6
+     7100             1.002               6
+     7200             1.002               6
+     7300             1.002               6
+     7400             1.003               6
+     7500             1.003               6
+     7600             1.002               6
+     7700             1.002               6
+     7800             1.002               6
+     7900             1.001               6
+     8000             1.001               6
+     8100             1.001               6
+     8200             1.001               6
+     8300             1.001               6
+     8400             1.001               6
+     8500             1.001               6
+     8600             1.001               6
+     8700             1.000               6
+     8800             1.001               6
+     8900             1.001               6
+     9000             1.001               6
+     9100             1.001               6
+     9200             1.001               6
+     9300             1.001               6
+     9400             1.001               6
+     9500             1.002               6
+     9600             1.001               6
+     9700             1.001               6
+     9800             1.002               6
+     9900             1.002               6
+     10000            1.002               6
+     10100            1.002               6
+     10200            1.002               6
+     10300            1.002               6
+     10400            1.001               6
+     10500            1.001               6
+     10600            1.001               6
+     10700            1.001               6
+     10800            1.001               6
+     10900            1.002               6
+     11000            1.002               6
+     11100            1.002               6
+     11200            1.002               6
+     11300            1.002               6
+     11400            1.002               6
+     11500            1.003               6
+     11600            1.003               6
+     11700            1.003               6
+     11800            1.003               6
+     11900            1.003               6
+     12000            1.003               6
+     12100            1.003               6
+     12200            1.003               6
+     12300            1.003               6
+     12400            1.003               6
+     12500            1.003               6
+     12600            1.003               6
+     12700            1.003               6
+     12800            1.003               6
+     12900            1.003               6
+     13000            1.003               6
+     13100            1.003               6
+     13200            1.003               6
+     13300            1.003               6
+     13400            1.003               6
+     13500            1.004               6
+     13600            1.004               6
+     13700            1.004               6
+     13800            1.004               6
+     13900            1.004               6
+     14000            1.004               6
+     14100            1.004               6
+     14200            1.003               6
+     14300            1.003               6
+     14400            1.004               6
+     14500            1.003               6
+     14600            1.003               6
+     14700            1.003               6
+     14800            1.003               6
+     14900            1.003               6
+     15000            1.003               6
+     15100            1.003               6
+     15200            1.002               6
+     15300            1.002               6
+     15400            1.002               6
+     15500            1.003               6
+     15600            1.003               6
+     15700            1.004               6
+     15800            1.004               6
+     15900            1.004               6
+     16000            1.004               6
+     16100            1.004               6
+     16200            1.004               6
+     16300            1.004               6
+     16400            1.004               6
+     16500            1.003               6
+     16600            1.003               6
+     16700            1.003               6
+     16800            1.003               6
+     16900            1.003               6
+     17000            1.004               6
+     17100            1.004               6
+     17200            1.004               6
+     17300            1.004               6
+     17400            1.004               6
+     17500            1.003               6
+     17600            1.003               6
+     17700            1.003               6
+     17800            1.002               6
+     17900            1.002               6
+     18000            1.002               6
+     18100            1.002               6
+     18200            1.002               6
+     18300            1.002               6
+     18400            1.002               6
+     18500            1.002               6
+     18600            1.002               6
+     18700            1.002               6
+     18800            1.002               6
+     18900            1.002               6
+     19000            1.002               6
+     19100            1.002               6
+     19200            1.002               6
+     19300            1.002               6
+     19400            1.002               6
+     19500            1.002               6
+     19600            1.002               6
+     19700            1.002               6
+     19800            1.001               6
+     19900            1.001               6
+     20000            1.001               6
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Bayesian posterior parameter distributions
+  Bayesian posterior parameter trace plots
+  Bayesian autocorrelation plots
+  Bayesian posterior predictive checking scatterplots
+  Bayesian posterior predictive checking distribution plots
+
+DIAGRAM INFORMATION
+
+  Mplus diagrams are currently not available for multilevel analysis.
+  No diagram output was produced.
+
+
+     Beginning Time:  01:29:12
+        Ending Time:  01:34:24
+       Elapsed Time:  00:05:12
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen

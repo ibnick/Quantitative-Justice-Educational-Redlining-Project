@@ -1,0 +1,571 @@
+Mplus VERSION 8.11
+MUTHEN & MUTHEN
+11/22/2026   1:14 AM
+
+INPUT INSTRUCTIONS
+
+  TITLE:  Set 1 Model 2 - schools nested in Districts; pct_sped on
+      random intercept only, no predictors. Outcome school % is_sped.
+
+  DATA:
+    FILE IS "S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt";
+
+  VARIABLE: NAMES ARE Schl is_sped reg_num regses_num	District
+     blk_c lat_c wht_c sped_c lses_c lep_c r_seg oss_c gen_c
+     z2_c z3_c z2z3_c sehd_c dip_c p_sped lsblk_c lslat_c lswht_c;
+            USEVARIABLES ARE
+            p_sped;
+
+           !pct_white_c is removed from the USEVARIABLES as a reference
+
+
+      CLUSTER = District Schl;
+      BETWEEN = p_sped;
+      USEOBSERVATIONS = p_sped LT 100;
+      MISSING ARE ALL (-999); !tells MPLUS the empty cells are all NAs
+
+
+    ANALYSIS:
+      TYPE = THREELEVEL;
+      ESTIMATOR = BAYES;
+      PROCESSORS = 4;
+      CHAINS = 4;
+      BITERATIONS = 100000(20000);
+      BCONVERGENCE = 0.05;
+
+  MODEL:
+      %WITHIN%
+      ! Nothing at the student level
+
+      %BETWEEN Schl%
+      ! variance Between schools within Districts
+      p_sped;
+
+      %BETWEEN District%
+      p_sped; ! variance between districts
+
+  OUTPUT:
+      TECH1 TECH8 STANDARDIZED;
+      PLOT:
+      TYPE = PLOT2;
+
+
+
+
+
+
+INPUT READING TERMINATED NORMALLY
+
+
+
+Set 1 Model 2 - schools nested in Districts; pct_sped on
+random intercept only, no predictors. Outcome school % is_sped.
+
+SUMMARY OF ANALYSIS
+
+Number of groups                                                 1
+Number of observations                                      137608
+
+Number of dependent variables                                    1
+Number of independent variables                                  0
+Number of continuous latent variables                            0
+
+Observed dependent variables
+
+  Continuous
+   P_SPED
+
+Variables with special functions
+
+  Cluster variables     DISTRICT  SCHL
+
+  Level 2 and level 3 between variables
+   P_SPED
+
+
+Estimator                                                    BAYES
+Specifications for Bayesian Estimation
+  Point estimate                                            MEDIAN
+  Number of Markov chain Monte Carlo (MCMC) chains               4
+  Random seed for the first chain                                0
+  Starting value information                           UNPERTURBED
+  Algorithm used for Markov chain Monte Carlo           GIBBS(PX1)
+  Convergence criterion                                  0.500D-01
+  Maximum number of iterations                              100000
+  K-th iteration used for thinning                               1
+
+Input data file(s)
+  S:\Ibrahim\UConn Spencer Project Analysis Delaware Data\K-12_24.txt
+Input data format  FREE
+
+
+SUMMARY OF DATA
+
+     Number of SCHL clusters                   207
+     Number of DISTRICT clusters                40
+
+
+COVARIANCE COVERAGE OF DATA
+
+Minimum covariance coverage value   0.100
+
+     Number of missing data patterns             1
+
+
+     PROPORTION OF DATA PRESENT
+
+
+           Covariance Coverage
+              P_SPED
+              ________
+ P_SPED         1.000
+
+
+
+UNIVARIATE SAMPLE STATISTICS
+
+
+     UNIVARIATE HIGHER-ORDER MOMENT DESCRIPTIVE STATISTICS
+
+         Variable/         Mean/     Skewness/   Minimum/ % with                Percentiles
+        Sample Size      Variance    Kurtosis    Maximum  Min/Max      20%/60%    40%/80%    Median
+
+     P_SPED               16.913       4.846       1.030    0.48%      11.092     13.826     15.127
+             207.000     121.909      30.591      99.167    0.48%      16.159     20.000
+
+
+THE MODEL ESTIMATION TERMINATED NORMALLY
+
+     USE THE FBITERATIONS OPTION TO INCREASE THE NUMBER OF ITERATIONS BY A FACTOR
+     OF AT LEAST TWO TO CHECK CONVERGENCE AND THAT THE PSR VALUE DOES NOT INCREASE.
+
+
+
+MODEL FIT INFORMATION
+
+Number of Free Parameters                               3
+
+Bayesian Posterior Predictive Checking using Chi-Square
+
+          95% Confidence Interval for the Difference Between
+          the Observed and the Replicated Chi-Square Values
+
+                                 -8.550             8.846
+
+          Posterior Predictive P-Value              0.482
+
+Information Criteria
+
+          Deviance (DIC)                         1583.011
+          Estimated Number of Parameters (pD)      10.867
+
+
+
+MODEL RESULTS
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+
+Within Level
+
+Between SCHL Level
+
+ Variances
+    P_SPED           117.534      12.292      0.000      96.430     144.375      *
+
+Between DISTRICT Level
+
+ Means
+    P_SPED            16.410       1.076      0.000      14.249      18.488      *
+
+ Variances
+    P_SPED             9.368       9.495      0.000       1.320      37.151      *
+
+
+STANDARDIZED MODEL RESULTS
+
+
+STDYX Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+Between SCHL Level
+
+ Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+Between DISTRICT Level
+
+ Means
+    P_SPED             5.347       4.576      0.000       2.595      14.633      *
+
+ Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+
+STDY Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+Between SCHL Level
+
+ Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+Between DISTRICT Level
+
+ Means
+    P_SPED             5.347       4.576      0.000       2.595      14.633      *
+
+ Variances
+    P_SPED             1.000       0.000      0.000       1.000       1.000
+
+
+STD Standardization
+
+                                Posterior  One-Tailed         95% C.I.
+                    Estimate       S.D.      P-Value   Lower 2.5%  Upper 2.5%  Significance
+Within Level
+
+Between SCHL Level
+
+ Variances
+    P_SPED           117.534      12.292      0.000      96.430     144.375      *
+
+Between DISTRICT Level
+
+ Means
+    P_SPED            16.410       1.076      0.000      14.249      18.488      *
+
+ Variances
+    P_SPED             9.368       9.495      0.000       1.320      37.151      *
+
+
+TECHNICAL 1 OUTPUT
+
+
+     PARAMETER SPECIFICATION FOR WITHIN
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN SCHL
+
+
+           NU
+              P_SPED
+              ________
+                    0
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED             1
+
+
+     PARAMETER SPECIFICATION FOR BETWEEN DISTRICT
+
+
+           NU
+              P_SPED
+              ________
+                    2
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED             3
+
+
+     STARTING VALUES FOR WITHIN
+
+
+     STARTING VALUES FOR BETWEEN SCHL
+
+
+           NU
+              P_SPED
+              ________
+                0.000
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED        21.849
+
+
+     STARTING VALUES FOR BETWEEN DISTRICT
+
+
+           NU
+              P_SPED
+              ________
+               15.602
+
+
+           THETA
+              P_SPED
+              ________
+ P_SPED        21.849
+
+
+
+     PRIORS FOR ALL PARAMETERS            PRIOR MEAN      PRIOR VARIANCE     PRIOR STD. DEV.
+
+     Parameter 1~IG(-1.000,0.000)          infinity            infinity            infinity
+     Parameter 2~N(0.000,infinity)           0.0000            infinity            infinity
+     Parameter 3~IG(-1.000,0.000)          infinity            infinity            infinity
+
+
+TECHNICAL 8 OUTPUT
+
+
+   TECHNICAL 8 OUTPUT FOR BAYES ESTIMATION
+
+     CHAIN    BSEED
+     1        0
+     2        285380
+     3        253358
+     4        93468
+
+                     POTENTIAL       PARAMETER WITH
+     ITERATION    SCALE REDUCTION      HIGHEST PSR
+     100              1.254               2
+     200              1.027               3
+     300              1.022               3
+     400              1.089               3
+     500              1.024               3
+     600              1.033               3
+     700              1.064               3
+     800              1.045               3
+     900              1.033               3
+     1000             1.008               2
+     1100             1.012               3
+     1200             1.019               3
+     1300             1.021               3
+     1400             1.020               3
+     1500             1.013               3
+     1600             1.019               2
+     1700             1.017               2
+     1800             1.011               2
+     1900             1.012               3
+     2000             1.009               3
+     2100             1.011               2
+     2200             1.006               2
+     2300             1.010               2
+     2400             1.009               2
+     2500             1.010               2
+     2600             1.010               2
+     2700             1.009               3
+     2800             1.012               3
+     2900             1.010               3
+     3000             1.011               3
+     3100             1.012               3
+     3200             1.017               3
+     3300             1.015               3
+     3400             1.016               3
+     3500             1.010               3
+     3600             1.007               3
+     3700             1.007               3
+     3800             1.008               3
+     3900             1.008               3
+     4000             1.004               3
+     4100             1.002               3
+     4200             1.001               3
+     4300             1.001               3
+     4400             1.001               2
+     4500             1.002               2
+     4600             1.001               2
+     4700             1.001               2
+     4800             1.001               2
+     4900             1.001               2
+     5000             1.001               2
+     5100             1.001               2
+     5200             1.001               2
+     5300             1.001               2
+     5400             1.001               3
+     5500             1.000               2
+     5600             1.000               3
+     5700             1.001               2
+     5800             1.001               2
+     5900             1.001               2
+     6000             1.001               2
+     6100             1.001               2
+     6200             1.001               3
+     6300             1.001               3
+     6400             1.001               3
+     6500             1.001               3
+     6600             1.001               3
+     6700             1.001               3
+     6800             1.001               3
+     6900             1.001               3
+     7000             1.001               3
+     7100             1.001               3
+     7200             1.001               3
+     7300             1.001               3
+     7400             1.001               3
+     7500             1.001               3
+     7600             1.001               3
+     7700             1.001               3
+     7800             1.001               3
+     7900             1.001               3
+     8000             1.001               3
+     8100             1.001               2
+     8200             1.001               2
+     8300             1.001               2
+     8400             1.001               2
+     8500             1.001               2
+     8600             1.001               2
+     8700             1.001               2
+     8800             1.001               3
+     8900             1.001               2
+     9000             1.001               2
+     9100             1.001               2
+     9200             1.001               2
+     9300             1.001               2
+     9400             1.001               2
+     9500             1.001               2
+     9600             1.000               2
+     9700             1.001               3
+     9800             1.001               3
+     9900             1.001               3
+     10000            1.001               3
+     10100            1.001               3
+     10200            1.002               3
+     10300            1.002               3
+     10400            1.002               3
+     10500            1.002               3
+     10600            1.002               3
+     10700            1.003               3
+     10800            1.003               3
+     10900            1.003               3
+     11000            1.002               3
+     11100            1.002               3
+     11200            1.003               3
+     11300            1.003               3
+     11400            1.002               3
+     11500            1.002               3
+     11600            1.002               3
+     11700            1.001               3
+     11800            1.002               3
+     11900            1.002               3
+     12000            1.002               3
+     12100            1.002               3
+     12200            1.002               3
+     12300            1.002               3
+     12400            1.002               3
+     12500            1.002               3
+     12600            1.002               3
+     12700            1.002               3
+     12800            1.002               3
+     12900            1.002               3
+     13000            1.002               3
+     13100            1.002               3
+     13200            1.001               3
+     13300            1.001               3
+     13400            1.002               3
+     13500            1.002               3
+     13600            1.002               3
+     13700            1.002               3
+     13800            1.002               3
+     13900            1.002               3
+     14000            1.002               3
+     14100            1.002               3
+     14200            1.002               3
+     14300            1.002               3
+     14400            1.002               3
+     14500            1.002               3
+     14600            1.003               3
+     14700            1.002               3
+     14800            1.002               3
+     14900            1.002               3
+     15000            1.002               3
+     15100            1.001               3
+     15200            1.002               3
+     15300            1.002               3
+     15400            1.002               3
+     15500            1.002               3
+     15600            1.002               3
+     15700            1.001               3
+     15800            1.002               3
+     15900            1.002               3
+     16000            1.001               3
+     16100            1.001               3
+     16200            1.001               3
+     16300            1.001               3
+     16400            1.001               3
+     16500            1.001               3
+     16600            1.001               3
+     16700            1.001               3
+     16800            1.001               3
+     16900            1.001               3
+     17000            1.001               3
+     17100            1.001               3
+     17200            1.000               3
+     17300            1.000               3
+     17400            1.000               3
+     17500            1.000               3
+     17600            1.000               3
+     17700            1.000               3
+     17800            1.001               3
+     17900            1.001               3
+     18000            1.001               3
+     18100            1.001               3
+     18200            1.001               3
+     18300            1.001               3
+     18400            1.001               3
+     18500            1.001               3
+     18600            1.001               3
+     18700            1.001               3
+     18800            1.001               3
+     18900            1.001               3
+     19000            1.001               3
+     19100            1.001               3
+     19200            1.001               3
+     19300            1.001               3
+     19400            1.001               3
+     19500            1.000               3
+     19600            1.000               3
+     19700            1.000               3
+     19800            1.000               3
+     19900            1.000               3
+     20000            1.000               3
+
+
+PLOT INFORMATION
+
+The following plots are available:
+
+  Bayesian posterior parameter distributions
+  Bayesian posterior parameter trace plots
+  Bayesian autocorrelation plots
+  Bayesian posterior predictive checking scatterplots
+  Bayesian posterior predictive checking distribution plots
+
+DIAGRAM INFORMATION
+
+  Mplus diagrams are currently not available for multilevel analysis.
+  No diagram output was produced.
+
+
+     Beginning Time:  01:14:02
+        Ending Time:  01:17:22
+       Elapsed Time:  00:03:20
+
+
+
+MUTHEN & MUTHEN
+3463 Stoner Ave.
+Los Angeles, CA  90066
+
+Tel: (310) 391-9971
+Fax: (310) 391-8971
+Web: www.StatModel.com
+Support: Support@StatModel.com
+
+Copyright (c) 1998-2024 Muthen & Muthen
